@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # Backend API Server
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      NODE_ENV: development
+      PORT: 5000
+      GOOGLE_CLOUD_PROJECT: ${GOOGLE_CLOUD_PROJECT}
+      FIREBASE_CONFIG: ${FIREBASE_CONFIG}
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    depends_on:
+      - rosbridge
+
+  # Frontend React App
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      REACT_APP_API_URL: http://localhost:5000
+      REACT_APP_WS_URL: ws://localhost:5000
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+  # ROSBridge Server (for local ROS testing)
+  rosbridge:
+    image: ros:noetic-ros-core
+    ports:
+      - "9090:9090"
+    command: >
+      bash -c "
+      apt-get update && 
+      apt-get install -y ros-noetic-rosbridge-server && 
+      source /opt/ros/noetic/setup.bash && 
+      roslaunch rosbridge_server rosbridge_websocket.launch
+      "
+    environment:
+      ROS_MASTER_URI: http://localhost:11311
+
+networks:
+  default:
+    name: raas-network

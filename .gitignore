@@ -1,0 +1,36 @@
+# Node modules
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build
+build/
+dist/
+.next/
+out/
+
+# GCP
+*.json
+!package.json
+!tsconfig.json
+service-account-key.json
+
+# Docker
+.dockerignore
