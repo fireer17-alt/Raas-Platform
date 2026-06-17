@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
+    "dev:ros": "nodemon src/index-local-ros.js",
     "build": "echo 'No build needed for Node.js'",
     "test": "jest"
   },

@@ -1,0 +1,116 @@
+version: '3.8'
+
+services:
+  # ROS Master
+  ros-master:
+    image: ros:noetic-ros-core
+    container_name: ros-master
+    environment:
+      ROS_MASTER_URI: http://ros-master:11311
+      ROS_HOSTNAME: ros-master
+    ports:
+      - "11311:11311"
+    command: roscore
+    networks:
+      - ros-network
+    healthcheck:
+      test: ["CMD", "rostopic", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  # ROSBridge Server (WebSocket interface to ROS)
+  rosbridge-server:
+    image: ros:noetic-ros-core
+    container_name: rosbridge-server
+    depends_on:
+      ros-master:
+        condition: service_healthy
+    environment:
+      ROS_MASTER_URI: http://ros-master:11311
+      ROS_HOSTNAME: rosbridge-server
+    ports:
+      - "9090:9090"
+    command: >
+      bash -c "
+      apt-get update && apt-get install -y ros-noetic-rosbridge-server && 
+      source /opt/ros/noetic/setup.bash && 
+      roslaunch rosbridge_server rosbridge_websocket.launch port:=9090
+      "
+    networks:
+      - ros-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9090"] || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  # Robot Simulator
+  robot-simulator:
+    build:
+      context: ./robot-simulator
+      dockerfile: Dockerfile
+    container_name: robot-simulator
+    depends_on:
+      ros-master:
+        condition: service_healthy
+    environment:
+      ROS_MASTER_URI: http://ros-master:11311
+      ROS_HOSTNAME: robot-simulator
+      ROBOT_TYPE: warehouse
+      ROBOT_ID: robot_1
+    networks:
+      - ros-network
+    volumes:
+      - ./robot-simulator:/app
+    restart: unless-stopped
+
+  # Backend API Server
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: raas-backend
+    ports:
+      - "5000:5000"
+    environment:
+      NODE_ENV: development
+      PORT: 5000
+      ROSBRIDGE_URL: ws://rosbridge-server:9090
+      ROSBRIDGE_TIMEOUT: 5000
+      CORS_ORIGIN: http://localhost:3000
+    depends_on:
+      - ros-master
+      - rosbridge-server
+    networks:
+      - ros-network
+    volumes:
+      - ./backend/src:/app/src
+    command: sh -c "npm run dev:ros"
+    restart: unless-stopped
+
+  # Frontend React App
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: raas-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      REACT_APP_API_URL: http://localhost:5000
+      REACT_APP_WS_URL: ws://localhost:5000
+    depends_on:
+      - backend
+    networks:
+      - ros-network
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+    restart: unless-stopped
+
+networks:
+  ros-network:
+    driver: bridge
