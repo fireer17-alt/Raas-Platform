@@ -63,44 +63,44 @@ const Dashboard = () => {
         </div>
       </div>
       
-      <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px', marginBottom: '35px' }}>
-        <div className="cyber-panel" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <div style={{ padding: '12px', background: 'rgba(0, 240, 255, 0.1)', borderRadius: '8px', color: 'var(--accent-cyan)' }}>
-            <Cpu size={28} />
+      <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px', marginBottom: '28px' }}>
+        <div className="cyber-panel" style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
+          <div style={{ padding: '12px', background: 'rgba(0, 240, 255, 0.1)', borderRadius: '10px', color: 'var(--accent-cyan)' }}>
+            <Cpu size={26} />
           </div>
           <div>
-            <h3 style={{ fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)' }}>Total Fleet</h3>
-            <p style={{ fontSize: '32px', fontWeight: 'bold', fontFamily: 'var(--font-mono)', color: '#fff', marginTop: '4px' }}>{stats.totalRobots}</p>
+            <h3 style={{ fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)' }}>Total Fleet</h3>
+            <p style={{ fontSize: '28px', fontWeight: 'bold', fontFamily: 'var(--font-mono)', color: '#fff', marginTop: '4px' }}>{stats.totalRobots}</p>
           </div>
         </div>
 
-        <div className="cyber-panel" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <div style={{ padding: '12px', background: 'rgba(57, 255, 20, 0.1)', borderRadius: '8px', color: 'var(--accent-green)', animation: 'pulse-green 3s infinite' }}>
-            <Activity size={28} />
+        <div className="cyber-panel" style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
+          <div style={{ padding: '12px', background: 'rgba(57, 255, 20, 0.1)', borderRadius: '10px', color: 'var(--accent-green)', animation: 'pulse-green 3s infinite' }}>
+            <Activity size={26} />
           </div>
           <div>
-            <h3 style={{ fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)' }}>Active Nodes</h3>
-            <p style={{ fontSize: '32px', fontWeight: 'bold', fontFamily: 'var(--font-mono)', color: 'var(--accent-green)', marginTop: '4px' }}>{stats.activeRobots}</p>
+            <h3 style={{ fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)' }}>Active Nodes</h3>
+            <p style={{ fontSize: '28px', fontWeight: 'bold', fontFamily: 'var(--font-mono)', color: 'var(--accent-green)', marginTop: '4px' }}>{stats.activeRobots}</p>
           </div>
         </div>
 
-        <div className="cyber-panel" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <div style={{ padding: '12px', background: 'rgba(255, 170, 68, 0.1)', borderRadius: '8px', color: 'var(--accent-gold)' }}>
-            <ListTodo size={28} />
+        <div className="cyber-panel" style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
+          <div style={{ padding: '12px', background: 'rgba(255, 170, 68, 0.1)', borderRadius: '10px', color: 'var(--accent-gold)' }}>
+            <ListTodo size={26} />
           </div>
           <div>
-            <h3 style={{ fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)' }}>Queued Tasks</h3>
-            <p style={{ fontSize: '32px', fontWeight: 'bold', fontFamily: 'var(--font-mono)', color: 'var(--accent-gold)', marginTop: '4px' }}>{stats.pendingTasks}</p>
+            <h3 style={{ fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)' }}>Queued Tasks</h3>
+            <p style={{ fontSize: '28px', fontWeight: 'bold', fontFamily: 'var(--font-mono)', color: 'var(--accent-gold)', marginTop: '4px' }}>{stats.pendingTasks}</p>
           </div>
         </div>
 
-        <div className="cyber-panel" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <div style={{ padding: '12px', background: 'rgba(189, 0, 255, 0.1)', borderRadius: '8px', color: 'var(--accent-purple)' }}>
-            <Zap size={28} />
+        <div className="cyber-panel" style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
+          <div style={{ padding: '12px', background: 'rgba(189, 0, 255, 0.1)', borderRadius: '10px', color: 'var(--accent-purple)' }}>
+            <Zap size={26} />
           </div>
           <div>
-            <h3 style={{ fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)' }}>Core Credits</h3>
-            <p style={{ fontSize: '32px', fontWeight: 'bold', fontFamily: 'var(--font-mono)', color: 'var(--accent-purple)', marginTop: '4px' }}>{stats.totalCredits}</p>
+            <h3 style={{ fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)' }}>Core Credits</h3>
+            <p style={{ fontSize: '28px', fontWeight: 'bold', fontFamily: 'var(--font-mono)', color: 'var(--accent-purple)', marginTop: '4px' }}>{stats.totalCredits}</p>
           </div>
         </div>
       </div>

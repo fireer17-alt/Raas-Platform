@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Cpu, Battery, MapPin, Plus, Shield, Activity, Truck, RefreshCw } from 'lucide-react';
+import { Cpu, Battery, MapPin, Plus, Shield, Truck, RefreshCw } from 'lucide-react';
 
 const RobotsList = () => {
   const [robots, setRobots] = useState([]);
@@ -79,12 +79,12 @@ const RobotsList = () => {
         </div>
       </div>
 
-      <div className="cyber-panel" style={{ marginBottom: '35px' }}>
+      <div className="cyber-panel" style={{ marginBottom: '28px' }}>
         <h2 className="cyber-title">
           <Plus size={20} style={{ color: 'var(--accent-cyan)' }} />
           Initialize New System Node
         </h2>
-        <form onSubmit={handleAddRobot} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px', alignItems: 'end' }}>
+        <form onSubmit={handleAddRobot} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', alignItems: 'end' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <label style={{ fontSize: '12px', textTransform: 'uppercase', color: 'var(--text-muted)', fontFamily: 'var(--font-heading)', letterSpacing: '0.5px' }}>Node Name</label>
             <input

@@ -18,59 +18,43 @@ function App() {
     barista: <RoboBarista />
   };
 
+  const navItems = [
+    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'robots', label: 'Fleet', icon: Cpu },
+    { id: 'barista', label: 'Barista', icon: Coffee },
+    { id: 'tasks', label: 'Tasks', icon: ListTodo },
+    { id: 'billing', label: 'Billing', icon: CreditCard },
+  ];
+
   return (
     <div className="app">
-      <nav className="sidebar">
-        <div className="logo">
-          <h1>
-            <Cpu size={24} style={{ color: 'var(--accent-cyan)' }} /> 
-            RaaS Control
-          </h1>
+      <header className="topbar">
+        <div className="topbar-brand">
+          <Cpu size={22} className="topbar-logo-icon" />
+          <span className="topbar-logo-text">RaaS Control</span>
         </div>
-        <ul className="nav-menu">
-          <li>
-            <a onClick={() => setCurrentPage('dashboard')}
-               className={currentPage === 'dashboard' ? 'active' : ''}
-            >
-              <LayoutDashboard size={20} />
-              Dashboard
-            </a>
-          </li>
-          <li>
-            <a onClick={() => setCurrentPage('robots')}
-               className={currentPage === 'robots' ? 'active' : ''}
-            >
-              <Cpu size={20} />
-              Robots Fleet
-            </a>
-          </li>
-          <li>
-            <a onClick={() => setCurrentPage('barista')}
-               className={currentPage === 'barista' ? 'active' : ''}
-            >
-              <Coffee size={20} />
-              Robo Barista
-            </a>
-          </li>
-          <li>
-            <a onClick={() => setCurrentPage('tasks')}
-               className={currentPage === 'tasks' ? 'active' : ''}
-            >
-              <ListTodo size={20} />
-              Task Queue
-            </a>
-          </li>
-          <li>
-            <a onClick={() => setCurrentPage('billing')}
-               className={currentPage === 'billing' ? 'active' : ''}
-            >
-              <CreditCard size={20} />
-              Billing & Tiers
-            </a>
-          </li>
-        </ul>
-      </nav>
-      <main className="main-content">
+        <nav className="topbar-nav">
+          {navItems.map(item => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.id}
+                onClick={() => setCurrentPage(item.id)}
+                className={currentPage === item.id ? 'active' : ''}
+              >
+                <Icon size={18} />
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
+        </nav>
+        <div className="topbar-meta">
+          <span className="status-dot"></span>
+          <span className="status-text">Online</span>
+        </div>
+      </header>
+
+      <main className={`main-content ${currentPage === 'barista' ? 'main-content-immersive' : ''}`}>
         {pages[currentPage]}
       </main>
     </div>

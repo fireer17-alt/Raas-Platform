@@ -18,13 +18,13 @@
 
   position: relative;
   width: 100%;
-  height: calc(100vh - 120px);
+  flex: 1;
   min-height: 600px;
   background-color: var(--bg-dark);
   color: var(--text-main);
-  border-radius: 12px;
+  border-radius: 0;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: none;
   font-family: inherit;
   user-select: none;
 }
@@ -256,27 +256,54 @@
 
 /* Drink selection cards */
 .barista-drink-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 12px;
   margin-bottom: 12px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.barista-drink-grid::-webkit-scrollbar {
+  height: 4px;
+}
+
+.barista-drink-grid::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 2px;
+}
+
+.barista-drink-grid::-webkit-scrollbar-thumb {
+  background: rgba(95, 225, 255, 0.25);
+  border-radius: 2px;
+}
+
+.barista-drink-grid::-webkit-scrollbar-thumb:hover {
+  background: rgba(95, 225, 255, 0.5);
 }
 
 .barista-drink-card {
+  flex: 0 0 160px;
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid var(--border-glass);
-  border-radius: 8px;
-  padding: 10px;
+  border-radius: 10px;
+  padding: 14px;
   text-align: left;
   cursor: pointer;
   transition: var(--transition);
   color: var(--text-main);
   outline: none;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .barista-drink-card:hover {
   background: rgba(95, 225, 255, 0.04);
   border-color: rgba(95, 225, 255, 0.3);
+  transform: translateY(-2px);
 }
 
 .barista-drink-card.selected {
@@ -286,19 +313,19 @@
 }
 
 .barista-drink-card .icon {
-  font-size: 1.1rem;
+  font-size: 1.4rem;
   display: block;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .barista-drink-card .name {
   font-weight: 700;
-  font-size: 0.78rem;
+  font-size: 0.85rem;
   display: block;
 }
 
 .barista-drink-card .desc {
-  font-size: 0.62rem;
+  font-size: 0.68rem;
   color: var(--text-muted);
   display: block;
   line-height: 1.2;
