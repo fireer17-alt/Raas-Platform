@@ -14,8 +14,7 @@ const HeroScene = () => {
 
     // ─── Scene ───
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xf5f5f7);
-    scene.fog = new THREE.Fog(0xf5f5f7, 8, 20);
+    scene.fog = new THREE.FogExp2(0x0b1511, 0.05); // Match CSS dark green background
 
     // ─── Camera ───
     const camera = new THREE.PerspectiveCamera(
@@ -27,7 +26,7 @@ const HeroScene = () => {
     camera.position.set(2.5, 1.8, 4.5);
 
     // ─── Renderer ───
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); // Transparent background
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
@@ -52,38 +51,40 @@ const HeroScene = () => {
     // Stop auto-rotate on user interaction
     controls.addEventListener('start', () => { controls.autoRotate = false; });
 
-    // ─── Apple-style Lighting ───
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    // ─── Warm Natural Lighting ───
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
     scene.add(ambientLight);
 
-    const keyLight = new THREE.DirectionalLight(0xffffff, 1.4);
+    const keyLight = new THREE.DirectionalLight(0xfffaed, 1.8);
     keyLight.position.set(4, 8, 5);
     keyLight.castShadow = true;
-    keyLight.shadow.mapSize.set(2048, 2048);
+    keyLight.shadow.mapSize.set(1024, 1024);
     keyLight.shadow.camera.near = 0.1;
     keyLight.shadow.camera.far = 25;
     keyLight.shadow.bias = -0.0001;
     keyLight.shadow.radius = 4;
     scene.add(keyLight);
 
-    const fillLight = new THREE.DirectionalLight(0xdde4ff, 0.5);
+    const fillLight = new THREE.DirectionalLight(0xd4eedd, 0.85); // soft green fill
     fillLight.position.set(-5, 3, -3);
     scene.add(fillLight);
 
-    const rimLight = new THREE.DirectionalLight(0xffeedd, 0.4);
+    const rimLight = new THREE.DirectionalLight(0xffdfb3, 0.6); // warm sunset rim light
     rimLight.position.set(-2, 2, -5);
     scene.add(rimLight);
 
-    const bottomLight = new THREE.PointLight(0x0071e3, 0.15, 10);
+    const bottomLight = new THREE.PointLight(0x1de9b6, 0.8, 10); // bioluminescent seafoam accent
     bottomLight.position.set(0, -1, 2);
     scene.add(bottomLight);
 
-    // ─── Ground Plane (reflection) ───
+    // ─── Ground Plane (dark glass reflection) ───
     const planeGeometry = new THREE.PlaneGeometry(20, 20);
     const planeMaterial = new THREE.MeshStandardMaterial({
-      color: 0xf5f5f7,
-      roughness: 0.85,
-      metalness: 0.05,
+      color: 0x050c09, // dark green glass
+      roughness: 0.15,
+      metalness: 0.9,
+      transparent: true,
+      opacity: 0.8
     });
     const plane = new THREE.Mesh(planeGeometry, planeMaterial);
     plane.rotation.x = -Math.PI / 2;
@@ -96,7 +97,7 @@ const HeroScene = () => {
     const shadowMaterial = new THREE.MeshBasicMaterial({
       color: 0x000000,
       transparent: true,
-      opacity: 0.15,
+      opacity: 0.45,
     });
     const contactShadow = new THREE.Mesh(shadowGeometry, shadowMaterial);
     contactShadow.rotation.x = -Math.PI / 2;
@@ -114,7 +115,7 @@ const HeroScene = () => {
     }
     particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     const particlesMaterial = new THREE.PointsMaterial({
-      color: 0x0071e3,
+      color: 0x1de9b6, // Seafoam green particles
       size: 0.025,
       transparent: true,
       opacity: 0.4,
@@ -252,21 +253,21 @@ const HeroScene = () => {
             alignItems: 'center',
             justifyContent: 'center',
             zIndex: 10,
-            background: '#f5f5f7',
+            background: '#0b1511', // Dark moss green background
           }}
         >
           <div
             style={{
               width: '40px',
               height: '40px',
-              border: '3px solid rgba(0, 113, 227, 0.15)',
-              borderTop: '3px solid #0071e3',
+              border: '3px solid rgba(29, 233, 182, 0.15)',
+              borderTop: '3px solid #1de9b6', // Seafoam green spinner
               borderRadius: '50%',
               animation: 'spin 1s linear infinite',
               marginBottom: '16px',
             }}
           />
-          <div style={{ fontSize: '14px', color: '#86868b', fontWeight: 500 }}>
+          <div style={{ fontSize: '14px', color: '#a3b8b0', fontWeight: 500 }}>
             Loading Model... {loadProgress}%
           </div>
         </div>

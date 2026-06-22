@@ -42,31 +42,33 @@ const LandingPage = ({ onLaunchApp }) => {
 
       {/* Hero Section */}
       <section className="hero-section" ref={heroRef}>
-        <div className="hero-scene-container">
-          <HeroScene />
-        </div>
-        <div className="hero-content animate-fade-in-up">
-          <div className="hero-label">RaaS Platform</div>
-          <h1>
-            Robotics.<br />
-            <span className="gradient-text">Redefined.</span>
-          </h1>
-          <p className="hero-subtitle">Robots as a Service</p>
-          <p className="hero-desc">
-            Deploy, manage, and scale your robot fleet with the most advanced
-            cloud-native robotics platform. From warehouse automation to autonomous baristas.
-          </p>
-          <div className="hero-buttons">
-            <button className="hero-btn-primary" onClick={onLaunchApp}>
-              Launch App <ArrowRight size={18} />
-            </button>
-            <button className="hero-btn-secondary" onClick={() => scrollTo(featuresRef)}>
-              Learn More
-            </button>
+        <div className="hero-container">
+          <div className="hero-content animate-fade-in-up">
+            <div className="hero-label">RaaS Platform</div>
+            <h1>
+              Robotics.<br />
+              <span className="gradient-text">Redefined.</span>
+            </h1>
+            <p className="hero-subtitle">Robots as a Service</p>
+            <p className="hero-desc">
+              Deploy, manage, and scale your robot fleet with the most advanced
+              cloud-native robotics platform. From warehouse automation to autonomous baristas.
+            </p>
+            <div className="hero-buttons">
+              <button className="hero-btn-primary" onClick={onLaunchApp}>
+                Launch App <ArrowRight size={18} />
+              </button>
+              <button className="hero-btn-secondary" onClick={() => scrollTo(featuresRef)}>
+                Learn More
+              </button>
+            </div>
+          </div>
+          <div className="hero-scene-container">
+            <HeroScene />
           </div>
         </div>
         <div style={{ position: 'absolute', bottom: '30px', zIndex: 2, animation: 'bounce 2s infinite' }}>
-          <ChevronDown size={24} color="#86868b" style={{ cursor: 'pointer' }} onClick={() => scrollTo(featuresRef)} />
+          <ChevronDown size={24} color="#a3b8b0" style={{ cursor: 'pointer' }} onClick={() => scrollTo(featuresRef)} />
         </div>
       </section>
 
