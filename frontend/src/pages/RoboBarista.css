@@ -1,0 +1,821 @@
+/* Scope all styles under the barista-dashboard wrapper to prevent global leaks */
+.barista-dashboard {
+  --bg-dark: #07070c;
+  --bg-panel: rgba(12, 13, 28, 0.76);
+  --border-glass: rgba(95, 225, 255, 0.16);
+  --border-orange: rgba(255, 119, 51, 0.3);
+  --cyan: #5fe1ff;
+  --orange: #ff7733;
+  --orange-glow: rgba(255, 119, 51, 0.45);
+  --cyan-glow: rgba(95, 225, 255, 0.35);
+  --green: #4ff3a6;
+  --green-glow: rgba(79, 243, 166, 0.3);
+  --red: #ff5566;
+  --text-main: #f0f5fc;
+  --text-muted: #8ca2b8;
+  --font-mono: 'JetBrains Mono', monospace;
+  --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+
+  position: relative;
+  width: 100%;
+  flex: 1;
+  min-height: 600px;
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  border-radius: 0;
+  overflow: hidden;
+  box-shadow: none;
+  font-family: inherit;
+  user-select: none;
+}
+
+/* Spinner & Loader Scoped */
+.barista-loader {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: #090a12;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  transition: opacity 0.5s ease;
+}
+
+.barista-loader .loader-content {
+  text-align: center;
+}
+
+.barista-loader .spinner {
+  width: 45px;
+  height: 45px;
+  border: 3px solid rgba(95, 225, 255, 0.1);
+  border-radius: 50%;
+  border-top-color: var(--cyan);
+  animation: spin 1s linear infinite;
+  margin: 0 auto 15px;
+  box-shadow: 0 0 12px var(--cyan-glow);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.barista-loader h2 {
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+  color: var(--cyan);
+  margin-bottom: 6px;
+}
+
+.barista-loader p {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* Top bar style */
+.barista-top-bar {
+  position: absolute;
+  top: 0; left: 0; width: 100%;
+  padding: 12px 20px;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+}
+
+.barista-top-bar .system-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.barista-top-bar .system-title h2 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #fff;
+  margin: 0;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+}
+
+.barista-top-bar .pulse-indicator {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.barista-top-bar .pulse-indicator.green {
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.15); opacity: 1; box-shadow: 0 0 10px var(--green); }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+.barista-top-bar .system-controls {
+  pointer-events: auto;
+  display: flex;
+  gap: 10px;
+}
+
+.barista-top-bar .btn-icon {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-glass);
+  color: var(--cyan);
+  padding: 6px 12px;
+  font-weight: 600;
+  font-size: 0.72rem;
+  border-radius: 20px;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: var(--transition);
+  backdrop-filter: blur(8px);
+}
+
+.barista-top-bar .btn-icon:hover {
+  background: rgba(95, 225, 255, 0.12);
+  border-color: var(--cyan);
+  box-shadow: 0 0 10px var(--cyan-glow);
+}
+
+/* Telemetry Header */
+.barista-telemetry-header {
+  position: absolute;
+  top: 55px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 14px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-glass);
+  backdrop-filter: blur(10px);
+  padding: 8px 16px;
+  border-radius: 10px;
+  z-index: 90;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+}
+
+.barista-telemetry-header .stat-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 85px;
+}
+
+.barista-telemetry-header .stat-box .label {
+  font-size: 0.55rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.barista-telemetry-header .stat-box .val {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--cyan);
+  font-family: var(--font-mono);
+}
+
+.barista-telemetry-header .val.status-idle { color: var(--cyan); }
+.barista-telemetry-header .val.status-active { color: var(--orange); }
+.barista-telemetry-header .val.status-ready { color: var(--green); }
+
+/* HUD Side Panel overlay */
+.barista-hud-panel {
+  position: absolute;
+  top: 55px;
+  left: 15px;
+  bottom: 15px;
+  width: 350px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-glass);
+  border-top: 2px solid var(--cyan);
+  border-radius: 12px;
+  backdrop-filter: blur(16px);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.barista-hud-panel .tab-headers {
+  display: flex;
+  border-bottom: 1px solid var(--border-glass);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.barista-hud-panel .tab-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  padding: 10px 4px;
+  font-weight: 700;
+  font-size: 0.68rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: var(--transition);
+  border-bottom: 2px solid transparent;
+}
+
+.barista-hud-panel .tab-btn.active {
+  color: var(--cyan);
+  border-bottom-color: var(--cyan);
+  background: rgba(95, 225, 255, 0.04);
+  text-shadow: 0 0 6px var(--cyan-glow);
+}
+
+.barista-hud-panel .tab-contents {
+  flex: 1;
+  overflow-y: auto;
+  padding: 15px;
+}
+
+.barista-hud-panel .section-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin: 12px 0 8px;
+  border-left: 2px solid var(--cyan);
+  padding-left: 6px;
+}
+
+.barista-hud-panel .section-title:first-of-type {
+  margin-top: 0;
+}
+
+/* Drink selection cards */
+.barista-drink-grid {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.barista-drink-grid::-webkit-scrollbar {
+  height: 4px;
+}
+
+.barista-drink-grid::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 2px;
+}
+
+.barista-drink-grid::-webkit-scrollbar-thumb {
+  background: rgba(95, 225, 255, 0.25);
+  border-radius: 2px;
+}
+
+.barista-drink-grid::-webkit-scrollbar-thumb:hover {
+  background: rgba(95, 225, 255, 0.5);
+}
+
+.barista-drink-card {
+  flex: 0 0 160px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-glass);
+  border-radius: 10px;
+  padding: 14px;
+  text-align: left;
+  cursor: pointer;
+  transition: var(--transition);
+  color: var(--text-main);
+  outline: none;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.barista-drink-card:hover {
+  background: rgba(95, 225, 255, 0.04);
+  border-color: rgba(95, 225, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.barista-drink-card.selected {
+  background: rgba(255, 119, 51, 0.06);
+  border-color: var(--orange);
+  box-shadow: 0 0 10px rgba(255, 119, 51, 0.15);
+}
+
+.barista-drink-card .icon {
+  font-size: 1.4rem;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.barista-drink-card .name {
+  font-weight: 700;
+  font-size: 0.85rem;
+  display: block;
+}
+
+.barista-drink-card .desc {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  display: block;
+  line-height: 1.2;
+}
+
+/* Customizer controls */
+.barista-hud-panel .control-group {
+  margin-bottom: 12px;
+}
+
+.barista-hud-panel .control-group label {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.barista-hud-panel .control-group.inline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-glass);
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.barista-hud-panel .control-group.inline label {
+  margin-bottom: 0;
+}
+
+/* Segmented Buttons */
+.barista-segmented {
+  display: flex;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-glass);
+  border-radius: 6px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.barista-segmented .seg-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 6px 4px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: var(--transition);
+}
+
+.barista-segmented .seg-btn:hover {
+  color: var(--text-main);
+}
+
+.barista-segmented .seg-btn.active {
+  background: var(--cyan);
+  color: var(--bg-dark);
+  box-shadow: 0 0 6px var(--cyan-glow);
+}
+
+/* Sliders */
+.barista-hud-panel .slider-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.barista-hud-panel .slider-row input[type="range"] {
+  flex: 1;
+}
+
+.barista-hud-panel .slider-row span {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  min-width: 38px;
+  text-align: right;
+  color: var(--cyan);
+}
+
+.barista-hud-panel input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  outline: none;
+}
+
+.barista-hud-panel input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--cyan);
+  cursor: pointer;
+  box-shadow: 0 0 6px var(--cyan);
+}
+
+.barista-hud-panel input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.barista-hud-panel input[type="range"]:disabled::-webkit-slider-thumb {
+  background: #4a5568;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* Custom Checkbox */
+.barista-checkbox {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--border-glass);
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.2);
+  outline: none;
+  cursor: pointer;
+  position: relative;
+  transition: var(--transition);
+}
+
+.barista-checkbox:checked {
+  background: var(--orange);
+  border-color: var(--orange);
+  box-shadow: 0 0 6px var(--orange-glow);
+}
+
+.barista-checkbox:checked::after {
+  content: "✔";
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--bg-dark);
+  font-size: 0.6rem;
+  font-weight: bold;
+}
+
+/* Order Summary Box */
+.barista-summary {
+  background: rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--border-glass);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-top: 10px;
+  margin-bottom: 15px;
+}
+
+.barista-summary .summary-line {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.68rem;
+  margin-bottom: 4px;
+}
+
+.barista-summary .summary-line:last-child {
+  margin-bottom: 0;
+}
+
+.barista-summary .summary-line span:first-child {
+  color: var(--text-muted);
+}
+
+.barista-summary .summary-line span:last-child {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+/* Order Button */
+.barista-btn-primary {
+  width: 100%;
+  background: linear-gradient(135deg, var(--orange), #ff5500);
+  border: none;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 1.5px;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 3px 10px var(--orange-glow);
+  transition: var(--transition);
+}
+
+.barista-btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 15px var(--orange-glow);
+}
+
+.barista-btn-primary:disabled {
+  background: #252836;
+  color: #4a5068;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Manual Override Warning */
+.barista-override-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: rgba(255, 85, 102, 0.05);
+  border: 1px solid rgba(255, 85, 102, 0.25);
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 12px;
+}
+
+.barista-override-warning .warning-text h3 {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--red);
+  margin: 0 0 2px 0;
+}
+
+.barista-override-warning .warning-text p {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  line-height: 1.3;
+  margin: 0;
+}
+
+/* Switch Container */
+.barista-switch {
+  position: relative;
+  display: inline-block;
+  width: 38px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.barista-switch input {
+  opacity: 0; width: 0; height: 0;
+}
+
+.barista-switch-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(255, 255, 255, 0.08);
+  transition: .3s;
+  border-radius: 18px;
+  border: 1px solid var(--border-glass);
+}
+
+.barista-switch-slider:before {
+  position: absolute;
+  content: "";
+  height: 12px;
+  width: 12px;
+  left: 2px;
+  bottom: 2px;
+  background-color: var(--text-muted);
+  transition: .3s;
+  border-radius: 50%;
+}
+
+.barista-switch input:checked + .barista-switch-slider {
+  background-color: rgba(255, 85, 102, 0.2);
+  border-color: var(--red);
+}
+
+.barista-switch input:checked + .barista-switch-slider:before {
+  transform: translateX(20px);
+  background-color: var(--red);
+  box-shadow: 0 0 6px var(--red);
+}
+
+/* Joint Sliders UI panel */
+.barista-joints-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: opacity 0.3s ease;
+}
+
+.barista-joints-panel.locked {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.barista-joint-row {
+  display: flex;
+  flex-direction: column;
+}
+
+.barista-joint-row .joint-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.barista-joint-row .joint-value {
+  font-family: var(--font-mono);
+  color: var(--cyan);
+}
+
+.barista-presets {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.barista-btn-sec {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-glass);
+  color: var(--text-main);
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding: 8px 2px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.barista-btn-sec:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--cyan);
+}
+
+.barista-btn-sec:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Diagnostics & Logging */
+.barista-telemetry-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.barista-telemetry-card {
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid var(--border-glass);
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.barista-telemetry-card .t-label {
+  font-size: 0.58rem;
+  color: var(--text-muted);
+  display: block;
+  margin-bottom: 2px;
+  text-transform: uppercase;
+}
+
+.barista-telemetry-card .t-value {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--cyan);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.barista-telemetry-card .progress-bar {
+  height: 3px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 1.5px;
+  overflow: hidden;
+}
+
+.barista-telemetry-card .progress-bar .fill {
+  height: 100%;
+  transition: width 0.5s ease-out;
+}
+
+/* Diagnostics logs console log */
+.barista-console {
+  background: #020204;
+  border: 1px solid var(--border-glass);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.barista-console .console-header {
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid var(--border-glass);
+  padding: 6px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--text-muted);
+}
+
+.barista-console .btn-small {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  padding: 1px 4px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.barista-console .btn-small:hover {
+  color: var(--red);
+  border-color: rgba(255, 85, 85, 0.3);
+}
+
+.barista-console .console-log {
+  height: 120px;
+  overflow-y: auto;
+  padding: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  line-height: 1.4;
+}
+
+.barista-console .console-log p {
+  margin-bottom: 2px;
+  word-break: break-all;
+}
+
+.barista-console .console-log p.sys { color: var(--text-muted); }
+.barista-console .console-log p.info { color: var(--cyan); }
+.barista-console .console-log p.warning { color: var(--orange); }
+.barista-console .console-log p.success { color: var(--green); }
+.barista-console .console-log p.err { color: var(--red); }
+
+/* Mouse control guide view hint */
+.barista-hint {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-glass);
+  backdrop-filter: blur(8px);
+  color: var(--text-muted);
+  font-size: 0.65rem;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 15px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* Canvas container overlay placement */
+.barista-canvas-container {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 1;
+}
+
+/* Mobile responsive drawer overlay */
+@media (max-width: 900px) {
+  .barista-dashboard {
+    height: auto;
+    min-height: 800px;
+    display: flex;
+    flex-direction: column;
+  }
+  .barista-canvas-container {
+    position: relative;
+    height: 400px;
+  }
+  .barista-hud-panel {
+    position: relative;
+    width: 100%;
+    height: 380px;
+    top: auto; left: auto; bottom: auto;
+    border-radius: 0 0 12px 12px;
+    box-shadow: none;
+  }
+  .barista-telemetry-header {
+    top: 45px;
+    width: 90%;
+    justify-content: space-around;
+  }
+  .barista-hint {
+    display: none;
+  }
+}

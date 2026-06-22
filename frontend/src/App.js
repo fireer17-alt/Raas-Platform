@@ -1,58 +1,73 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
+import { LayoutDashboard, Cpu, ListTodo, CreditCard, Coffee, ArrowLeft } from 'lucide-react';
+import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
 import RobotsList from './pages/RobotsList';
 import TaskManager from './pages/TaskManager';
 import Billing from './pages/Billing';
+import RoboBarista from './pages/RoboBarista';
 
 function App() {
-  const [currentPage, setCurrentPage] = React.useState('dashboard');
+  const [mode, setMode] = useState('landing'); // 'landing' | 'app'
+  const [currentPage, setCurrentPage] = useState('dashboard');
+
+  if (mode === 'landing') {
+    return <LandingPage onLaunchApp={() => setMode('app')} />;
+  }
 
   const pages = {
     dashboard: <Dashboard />,
     robots: <RobotsList />,
     tasks: <TaskManager />,
-    billing: <Billing />
+    billing: <Billing />,
+    barista: <RoboBarista />
   };
+
+  const navItems = [
+    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'robots', label: 'Fleet', icon: Cpu },
+    { id: 'barista', label: 'Barista', icon: Coffee },
+    { id: 'tasks', label: 'Tasks', icon: ListTodo },
+    { id: 'billing', label: 'Billing', icon: CreditCard },
+  ];
 
   return (
     <div className="app">
-      <nav className="sidebar">
-        <div className="logo">
-          <h1>🤖 RaaS</h1>
+      <header className="topbar">
+        <div className="topbar-brand">
+          <button 
+            className="back-btn" 
+            onClick={() => setMode('landing')}
+            title="Back to Landing"
+          >
+            <ArrowLeft size={18} />
+          </button>
+          <Cpu size={22} className="topbar-logo-icon" />
+          <span className="topbar-logo-text">RaaS</span>
         </div>
-        <ul className="nav-menu">
-          <li>
-            <a onClick={() => setCurrentPage('dashboard')}
-               className={currentPage === 'dashboard' ? 'active' : ''}
-            >
-              Dashboard
-            </a>
-          </li>
-          <li>
-            <a onClick={() => setCurrentPage('robots')}
-               className={currentPage === 'robots' ? 'active' : ''}
-            >
-              Robots
-            </a>
-          </li>
-          <li>
-            <a onClick={() => setCurrentPage('tasks')}
-               className={currentPage === 'tasks' ? 'active' : ''}
-            >
-              Tasks
-            </a>
-          </li>
-          <li>
-            <a onClick={() => setCurrentPage('billing')}
-               className={currentPage === 'billing' ? 'active' : ''}
-            >
-              Billing
-            </a>
-          </li>
-        </ul>
-      </nav>
-      <main className="main-content">
+        <nav className="topbar-nav">
+          {navItems.map(item => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.id}
+                onClick={() => setCurrentPage(item.id)}
+                className={currentPage === item.id ? 'active' : ''}
+              >
+                <Icon size={18} />
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
+        </nav>
+        <div className="topbar-meta">
+          <span className="status-dot"></span>
+          <span className="status-text">Online</span>
+        </div>
+      </header>
+
+      <main className={`main-content ${currentPage === 'barista' ? 'main-content-immersive' : ''}`}>
         {pages[currentPage]}
       </main>
     </div>

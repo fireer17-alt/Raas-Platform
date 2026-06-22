@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { ListTodo, Cpu, AlertTriangle, Calendar, Plus, Play, CheckCircle2, Clock } from 'lucide-react';
 
 const TaskManager = () => {
   const [tasks, setTasks] = useState([]);
@@ -32,70 +33,189 @@ const TaskManager = () => {
       await axios.post('http://localhost:5000/api/tasks', newTask);
       setNewTask({ name: '', robotId: '', priority: 'medium', dueDate: '' });
       fetchData();
-      alert('Task created successfully!');
     } catch (error) {
       console.error('Error creating task:', error);
-      alert('Error creating task');
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  const getPriorityStyle = (priority) => {
+    switch (priority) {
+      case 'high':
+        return {
+          borderColor: 'var(--accent-red)',
+          boxShadow: '0 0 15px rgba(255, 59, 59, 0.15)',
+          leftColor: 'var(--accent-red)'
+        };
+      case 'medium':
+        return {
+          borderColor: 'var(--accent-gold)',
+          boxShadow: '0 0 15px rgba(255, 170, 68, 0.15)',
+          leftColor: 'var(--accent-gold)'
+        };
+      case 'low':
+      default:
+        return {
+          borderColor: 'var(--panel-border)',
+          boxShadow: 'none',
+          leftColor: 'var(--text-muted)'
+        };
+    }
+  };
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case 'pending':
+        return <Clock size={16} style={{ color: 'var(--accent-gold)' }} />;
+      case 'running':
+      case 'active':
+        return <Play size={16} style={{ color: 'var(--accent-cyan)', animation: 'pulse-cyan 1.5s infinite' }} />;
+      case 'completed':
+        return <CheckCircle2 size={16} style={{ color: 'var(--accent-green)' }} />;
+      default:
+        return <Clock size={16} />;
+    }
+  };
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-mono)', color: 'var(--accent-cyan)' }}>
+        [LOADING...]
+      </div>
+    );
+  }
 
   return (
     <div className="tasks-page">
-      <h1>Task Manager</h1>
+      <div className="page-header">
+        <h1>Task Scheduler</h1>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '14px', color: 'var(--accent-cyan)' }}>
+          QUEUE ACTIVE
+        </div>
+      </div>
 
-      <div className="create-task-form" style={{ marginBottom: '30px', padding: '20px', backgroundColor: 'white', borderRadius: '5px' }}>
-        <h2>Create New Task</h2>
-        <form onSubmit={handleCreateTask}>
-          <input
-            type="text"
-            placeholder="Task Name"
-            value={newTask.name}
-            onChange={(e) => setNewTask({ ...newTask, name: e.target.value })}
-            required
-            style={{ marginRight: '10px', padding: '8px', marginBottom: '10px', width: '100%' }}
-          />
-          <select
-            value={newTask.robotId}
-            onChange={(e) => setNewTask({ ...newTask, robotId: e.target.value })}
-            required
-            style={{ marginRight: '10px', padding: '8px', marginBottom: '10px', width: '100%' }}
-          >
-            <option value="">Select Robot</option>
-            {robots.map(robot => (
-              <option key={robot.id} value={robot.id}>{robot.name}</option>
-            ))}
-          </select>
-          <select
-            value={newTask.priority}
-            onChange={(e) => setNewTask({ ...newTask, priority: e.target.value })}
-            style={{ marginRight: '10px', padding: '8px', marginBottom: '10px', width: '100%' }}
-          >
-            <option value="low">Low Priority</option>
-            <option value="medium">Medium Priority</option>
-            <option value="high">High Priority</option>
-          </select>
-          <input
-            type="date"
-            value={newTask.dueDate}
-            onChange={(e) => setNewTask({ ...newTask, dueDate: e.target.value })}
-            style={{ marginRight: '10px', padding: '8px', marginBottom: '10px', width: '100%' }}
-          />
-          <button type="submit" style={{ padding: '8px 15px', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', width: '100%' }}>Create Task</button>
+      <div className="cyber-panel" style={{ marginBottom: '28px' }}>
+        <h2 className="cyber-title">
+          <Plus size={20} style={{ color: 'var(--accent-cyan)' }} />
+          New Task
+        </h2>
+        <form onSubmit={handleCreateTask} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '15px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <label style={{ fontSize: '12px', textTransform: 'uppercase', color: 'var(--text-muted)', fontFamily: 'var(--font-heading)', letterSpacing: '0.5px' }}>Task Name</label>
+              <input
+                type="text"
+                placeholder="e.g. Scan Sector B-9"
+                value={newTask.name}
+                onChange={(e) => setNewTask({ ...newTask, name: e.target.value })}
+                required
+                className="cyber-input"
+              />
+            </div>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <label style={{ fontSize: '12px', textTransform: 'uppercase', color: 'var(--text-muted)', fontFamily: 'var(--font-heading)', letterSpacing: '0.5px' }}>Assign Robot</label>
+              <select
+                value={newTask.robotId}
+                onChange={(e) => setNewTask({ ...newTask, robotId: e.target.value })}
+                required
+                className="cyber-select"
+                style={{ height: '46px' }}
+              >
+                <option value="">Select Robot</option>
+                {robots.map(robot => (
+                  <option key={robot.id} value={robot.id}>{robot.name} ({robot.type})</option>
+                ))}
+              </select>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <label style={{ fontSize: '12px', textTransform: 'uppercase', color: 'var(--text-muted)', fontFamily: 'var(--font-heading)', letterSpacing: '0.5px' }}>Priority</label>
+              <select
+                value={newTask.priority}
+                onChange={(e) => setNewTask({ ...newTask, priority: e.target.value })}
+                className="cyber-select"
+                style={{ height: '46px' }}
+              >
+                <option value="low">Low (Routine)</option>
+                <option value="medium">Medium (Standard)</option>
+                <option value="high">High (Critical)</option>
+              </select>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <label style={{ fontSize: '12px', textTransform: 'uppercase', color: 'var(--text-muted)', fontFamily: 'var(--font-heading)', letterSpacing: '0.5px' }}>Due Date</label>
+              <input
+                type="date"
+                value={newTask.dueDate}
+                onChange={(e) => setNewTask({ ...newTask, dueDate: e.target.value })}
+                className="cyber-input"
+                style={{ height: '46px' }}
+              />
+            </div>
+          </div>
+
+          <button type="submit" className="cyber-button" style={{ alignSelf: 'flex-end', minWidth: '180px', height: '46px' }}>
+            Create Task
+          </button>
         </form>
       </div>
 
-      <div className="tasks-list">
-        <h2>All Tasks</h2>
-        {tasks.map((task) => (
-          <div key={task.id} className="task-card" style={{ padding: '15px', backgroundColor: 'white', borderRadius: '5px', marginBottom: '15px', borderLeft: `4px solid ${task.priority === 'high' ? '#dc3545' : task.priority === 'medium' ? '#ffc107' : '#6c757d'}` }}>
-            <h3>{task.name}</h3>
-            <p><strong>Status:</strong> {task.status}</p>
-            <p><strong>Priority:</strong> {task.priority}</p>
-            <p><strong>Due Date:</strong> {task.dueDate}</p>
+      <div className="tasks-list" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <h2 className="cyber-title">
+          <ListTodo size={20} style={{ color: 'var(--accent-cyan)' }} />
+          Active Tasks
+        </h2>
+        
+        {tasks.length === 0 ? (
+          <div style={{ padding: '30px', textAlign: 'center', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+            [NO ACTIVE TASKS]
           </div>
-        ))}
+        ) : (
+          tasks.map((task) => {
+            const pStyle = getPriorityStyle(task.priority);
+            const assignedRobot = robots.find(r => r.id === task.robotId);
+            
+            return (
+              <div 
+                key={task.id} 
+                className="cyber-panel" 
+                style={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  alignItems: 'center', 
+                  borderColor: pStyle.borderColor, 
+                  boxShadow: pStyle.boxShadow,
+                  padding: '16px 24px',
+                  borderLeft: `4px solid ${pStyle.leftColor}`
+                }}
+              >
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <h3 style={{ fontSize: '18px', fontWeight: '600', fontFamily: 'var(--font-body)', color: '#1d1d1f' }}>{task.name}</h3>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '20px', fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <Cpu size={14} /> {assignedRobot ? assignedRobot.name : 'Unassigned'}
+                    </span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <Calendar size={14} /> {task.dueDate || 'ASAP'}
+                    </span>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', padding: '4px 10px', background: 'rgba(0,0,0,0.04)', borderRadius: '4px', border: '1px solid rgba(0,0,0,0.06)' }}>
+                    {task.priority === 'high' && <AlertTriangle size={12} style={{ color: 'var(--accent-red)' }} />}
+                    <span style={{ color: pStyle.leftColor, fontWeight: 'bold' }}>{task.priority}</span>
+                  </div>
+                  
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontFamily: 'var(--font-mono)', textTransform: 'uppercase' }}>
+                    {getStatusIcon(task.status)}
+                    <span style={{ color: '#1d1d1f' }}>{task.status}</span>
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        )}
       </div>
     </div>
   );

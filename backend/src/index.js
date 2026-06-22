@@ -42,7 +42,7 @@ try {
 }
 
 // ROS Integration
-const ROSLIB = require('roslibjs');
+const ROSLIB = require('roslib');
 let ros = null;
 
 // Routes
