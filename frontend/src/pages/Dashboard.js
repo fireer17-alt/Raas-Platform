@@ -49,7 +49,7 @@ const Dashboard = () => {
   if (loading) {
     return (
       <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-mono)', color: 'var(--accent-cyan)' }}>
-        [LNK_ESTABLISHING_COMMUNICATIONS...]
+        [LOADING...]
       </div>
     );
   }
@@ -59,23 +59,23 @@ const Dashboard = () => {
       <div className="page-header">
         <h1>Operations Dashboard</h1>
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: '14px', color: 'var(--accent-cyan)' }}>
-          SYSTEM NODE: ONLINE
+          SYSTEM ONLINE
         </div>
       </div>
       
       <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px', marginBottom: '28px' }}>
         <div className="cyber-panel" style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
-          <div style={{ padding: '12px', background: 'rgba(0, 240, 255, 0.1)', borderRadius: '10px', color: 'var(--accent-cyan)' }}>
+          <div style={{ padding: '12px', background: 'rgba(0, 113, 227, 0.08)', borderRadius: '12px', color: 'var(--accent-cyan)' }}>
             <Cpu size={26} />
           </div>
           <div>
             <h3 style={{ fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)' }}>Total Fleet</h3>
-            <p style={{ fontSize: '28px', fontWeight: 'bold', fontFamily: 'var(--font-mono)', color: '#fff', marginTop: '4px' }}>{stats.totalRobots}</p>
+            <p style={{ fontSize: '28px', fontWeight: 'bold', fontFamily: 'var(--font-mono)', color: '#1d1d1f', marginTop: '4px' }}>{stats.totalRobots}</p>
           </div>
         </div>
 
         <div className="cyber-panel" style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
-          <div style={{ padding: '12px', background: 'rgba(57, 255, 20, 0.1)', borderRadius: '10px', color: 'var(--accent-green)', animation: 'pulse-green 3s infinite' }}>
+          <div style={{ padding: '12px', background: 'rgba(52, 199, 89, 0.08)', borderRadius: '12px', color: 'var(--accent-green)', animation: 'pulse-green 3s infinite' }}>
             <Activity size={26} />
           </div>
           <div>
@@ -85,7 +85,7 @@ const Dashboard = () => {
         </div>
 
         <div className="cyber-panel" style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
-          <div style={{ padding: '12px', background: 'rgba(255, 170, 68, 0.1)', borderRadius: '10px', color: 'var(--accent-gold)' }}>
+          <div style={{ padding: '12px', background: 'rgba(255, 149, 0, 0.08)', borderRadius: '12px', color: 'var(--accent-gold)' }}>
             <ListTodo size={26} />
           </div>
           <div>
@@ -95,7 +95,7 @@ const Dashboard = () => {
         </div>
 
         <div className="cyber-panel" style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
-          <div style={{ padding: '12px', background: 'rgba(189, 0, 255, 0.1)', borderRadius: '10px', color: 'var(--accent-purple)' }}>
+          <div style={{ padding: '12px', background: 'rgba(175, 82, 222, 0.08)', borderRadius: '12px', color: 'var(--accent-purple)' }}>
             <Zap size={26} />
           </div>
           <div>
@@ -108,7 +108,7 @@ const Dashboard = () => {
       <div className="cyber-panel">
         <h2 className="cyber-title">
           <Activity size={20} style={{ color: 'var(--accent-cyan)' }} />
-          Fleet Telemetry Graph
+          Fleet Telemetry
         </h2>
         <div style={{ width: '100%', height: 350, marginTop: '20px' }}>
           <ResponsiveContainer width="100%" height="100%">
@@ -119,35 +119,36 @@ const Dashboard = () => {
                   <stop offset="95%" stopColor="var(--accent-cyan)" stopOpacity={0.1}/>
                 </linearGradient>
               </defs>
-              <CartesianGrid stroke="rgba(0, 240, 255, 0.06)" strokeDasharray="4 4" />
+              <CartesianGrid stroke="rgba(0, 0, 0, 0.06)" strokeDasharray="4 4" />
               <XAxis 
                 dataKey="time" 
-                stroke="var(--text-muted)" 
-                tick={{ fill: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontSize: 12 }} 
+                stroke="#86868b" 
+                tick={{ fill: '#86868b', fontFamily: 'var(--font-mono)', fontSize: 12 }} 
               />
               <YAxis 
-                stroke="var(--text-muted)" 
-                tick={{ fill: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontSize: 12 }}
+                stroke="#86868b" 
+                tick={{ fill: '#86868b', fontFamily: 'var(--font-mono)', fontSize: 12 }}
                 domain={[0, 100]}
               />
               <Tooltip 
                 contentStyle={{ 
-                  backgroundColor: 'rgba(10, 14, 26, 0.95)', 
-                  border: '1px solid var(--panel-border-hover)', 
-                  borderRadius: '6px', 
-                  color: '#fff',
-                  fontFamily: 'var(--font-body)'
+                  backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                  border: '1px solid rgba(0, 0, 0, 0.08)', 
+                  borderRadius: '12px', 
+                  color: '#1d1d1f',
+                  fontFamily: 'var(--font-body)',
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.08)'
                 }}
-                labelStyle={{ fontFamily: 'var(--font-mono)', color: 'var(--accent-cyan)', marginBottom: '4px' }}
+                labelStyle={{ fontFamily: 'var(--font-mono)', color: '#0071e3', marginBottom: '4px' }}
               />
-              <Legend wrapperStyle={{ fontFamily: 'var(--font-heading)', textTransform: 'uppercase', fontSize: 13, color: 'var(--text-muted)' }} />
+              <Legend wrapperStyle={{ fontFamily: 'var(--font-heading)', fontSize: 13, color: '#6e6e73' }} />
               <Line 
                 type="monotone" 
                 dataKey="battery" 
                 name="Average Battery (%)"
                 stroke="var(--accent-cyan)" 
                 strokeWidth={3}
-                dot={{ stroke: 'var(--accent-cyan)', strokeWidth: 2, r: 4, fill: '#06070d' }}
+                dot={{ stroke: 'var(--accent-cyan)', strokeWidth: 2, r: 4, fill: '#fff' }}
                 activeDot={{ r: 7, stroke: 'var(--accent-cyan)', strokeWidth: 1, fill: 'var(--accent-cyan)' }}
               />
             </LineChart>

@@ -79,7 +79,7 @@ const TaskManager = () => {
   if (loading) {
     return (
       <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-mono)', color: 'var(--accent-cyan)' }}>
-        [LOADING_SCHEDULER_MATRIX...]
+        [LOADING...]
       </div>
     );
   }
@@ -89,22 +89,22 @@ const TaskManager = () => {
       <div className="page-header">
         <h1>Task Scheduler</h1>
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: '14px', color: 'var(--accent-cyan)' }}>
-          QUEUE CAPACITY: ACTIVE
+          QUEUE ACTIVE
         </div>
       </div>
 
-      <div className="cyber-panel" style={{ marginBottom: '35px' }}>
+      <div className="cyber-panel" style={{ marginBottom: '28px' }}>
         <h2 className="cyber-title">
           <Plus size={20} style={{ color: 'var(--accent-cyan)' }} />
-          Allocate New Mission Task
+          New Task
         </h2>
         <form onSubmit={handleCreateTask} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '15px' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <label style={{ fontSize: '12px', textTransform: 'uppercase', color: 'var(--text-muted)', fontFamily: 'var(--font-heading)', letterSpacing: '0.5px' }}>Task Command / Name</label>
+              <label style={{ fontSize: '12px', textTransform: 'uppercase', color: 'var(--text-muted)', fontFamily: 'var(--font-heading)', letterSpacing: '0.5px' }}>Task Name</label>
               <input
                 type="text"
-                placeholder="e.g. Scan Sector B-9 or Deliver Cargo"
+                placeholder="e.g. Scan Sector B-9"
                 value={newTask.name}
                 onChange={(e) => setNewTask({ ...newTask, name: e.target.value })}
                 required
@@ -113,7 +113,7 @@ const TaskManager = () => {
             </div>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <label style={{ fontSize: '12px', textTransform: 'uppercase', color: 'var(--text-muted)', fontFamily: 'var(--font-heading)', letterSpacing: '0.5px' }}>Assign to System Node</label>
+              <label style={{ fontSize: '12px', textTransform: 'uppercase', color: 'var(--text-muted)', fontFamily: 'var(--font-heading)', letterSpacing: '0.5px' }}>Assign Robot</label>
               <select
                 value={newTask.robotId}
                 onChange={(e) => setNewTask({ ...newTask, robotId: e.target.value })}
@@ -121,7 +121,7 @@ const TaskManager = () => {
                 className="cyber-select"
                 style={{ height: '46px' }}
               >
-                <option value="">Select Target Robot</option>
+                <option value="">Select Robot</option>
                 {robots.map(robot => (
                   <option key={robot.id} value={robot.id}>{robot.name} ({robot.type})</option>
                 ))}
@@ -129,21 +129,21 @@ const TaskManager = () => {
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <label style={{ fontSize: '12px', textTransform: 'uppercase', color: 'var(--text-muted)', fontFamily: 'var(--font-heading)', letterSpacing: '0.5px' }}>Execution Urgency</label>
+              <label style={{ fontSize: '12px', textTransform: 'uppercase', color: 'var(--text-muted)', fontFamily: 'var(--font-heading)', letterSpacing: '0.5px' }}>Priority</label>
               <select
                 value={newTask.priority}
                 onChange={(e) => setNewTask({ ...newTask, priority: e.target.value })}
                 className="cyber-select"
                 style={{ height: '46px' }}
               >
-                <option value="low">Low Priority (Routine)</option>
-                <option value="medium">Medium Priority (Standard)</option>
-                <option value="high">High Priority (CRITICAL)</option>
+                <option value="low">Low (Routine)</option>
+                <option value="medium">Medium (Standard)</option>
+                <option value="high">High (Critical)</option>
               </select>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <label style={{ fontSize: '12px', textTransform: 'uppercase', color: 'var(--text-muted)', fontFamily: 'var(--font-heading)', letterSpacing: '0.5px' }}>Target Due Date</label>
+              <label style={{ fontSize: '12px', textTransform: 'uppercase', color: 'var(--text-muted)', fontFamily: 'var(--font-heading)', letterSpacing: '0.5px' }}>Due Date</label>
               <input
                 type="date"
                 value={newTask.dueDate}
@@ -155,20 +155,20 @@ const TaskManager = () => {
           </div>
 
           <button type="submit" className="cyber-button" style={{ alignSelf: 'flex-end', minWidth: '180px', height: '46px' }}>
-            Queue Task Protocol
+            Create Task
           </button>
         </form>
       </div>
 
-      <div className="tasks-list" style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+      <div className="tasks-list" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
         <h2 className="cyber-title">
           <ListTodo size={20} style={{ color: 'var(--accent-cyan)' }} />
-          Active Mission Queue
+          Active Tasks
         </h2>
         
         {tasks.length === 0 ? (
           <div style={{ padding: '30px', textAlign: 'center', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-            [NO ACTIVE MISSION TASKS IN QUEUE]
+            [NO ACTIVE TASKS]
           </div>
         ) : (
           tasks.map((task) => {
@@ -190,26 +190,26 @@ const TaskManager = () => {
                 }}
               >
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <h3 style={{ fontSize: '18px', fontWeight: 'bold', fontFamily: 'var(--font-body)', color: '#fff' }}>{task.name}</h3>
+                  <h3 style={{ fontSize: '18px', fontWeight: '600', fontFamily: 'var(--font-body)', color: '#1d1d1f' }}>{task.name}</h3>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '20px', fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <Cpu size={14} /> Node: {assignedRobot ? assignedRobot.name : 'UNASSIGNED'}
+                      <Cpu size={14} /> {assignedRobot ? assignedRobot.name : 'Unassigned'}
                     </span>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <Calendar size={14} /> Due: {task.dueDate || 'ASAP'}
+                      <Calendar size={14} /> {task.dueDate || 'ASAP'}
                     </span>
                   </div>
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', padding: '4px 10px', background: 'rgba(255,255,255,0.04)', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.06)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', padding: '4px 10px', background: 'rgba(0,0,0,0.04)', borderRadius: '4px', border: '1px solid rgba(0,0,0,0.06)' }}>
                     {task.priority === 'high' && <AlertTriangle size={12} style={{ color: 'var(--accent-red)' }} />}
-                    Priority: <span style={{ color: pStyle.leftColor, fontWeight: 'bold' }}>{task.priority}</span>
+                    <span style={{ color: pStyle.leftColor, fontWeight: 'bold' }}>{task.priority}</span>
                   </div>
                   
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontFamily: 'var(--font-mono)', textTransform: 'uppercase' }}>
                     {getStatusIcon(task.status)}
-                    <span style={{ color: '#fff' }}>{task.status}</span>
+                    <span style={{ color: '#1d1d1f' }}>{task.status}</span>
                   </div>
                 </div>
               </div>

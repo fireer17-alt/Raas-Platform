@@ -450,6 +450,7 @@ const RoboBarista = () => {
     window.addEventListener('resize', handleResize);
 
     // Cleanup mounting hook
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     return () => {
       window.removeEventListener('resize', handleResize);
       cancelAnimationFrame(requestRef.current);

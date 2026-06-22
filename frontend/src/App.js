@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
-import { LayoutDashboard, Cpu, ListTodo, CreditCard, Coffee } from 'lucide-react';
+import { LayoutDashboard, Cpu, ListTodo, CreditCard, Coffee, ArrowLeft } from 'lucide-react';
+import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
 import RobotsList from './pages/RobotsList';
 import TaskManager from './pages/TaskManager';
@@ -8,7 +9,12 @@ import Billing from './pages/Billing';
 import RoboBarista from './pages/RoboBarista';
 
 function App() {
-  const [currentPage, setCurrentPage] = React.useState('dashboard');
+  const [mode, setMode] = useState('landing'); // 'landing' | 'app'
+  const [currentPage, setCurrentPage] = useState('dashboard');
+
+  if (mode === 'landing') {
+    return <LandingPage onLaunchApp={() => setMode('app')} />;
+  }
 
   const pages = {
     dashboard: <Dashboard />,
@@ -30,8 +36,15 @@ function App() {
     <div className="app">
       <header className="topbar">
         <div className="topbar-brand">
+          <button 
+            className="back-btn" 
+            onClick={() => setMode('landing')}
+            title="Back to Landing"
+          >
+            <ArrowLeft size={18} />
+          </button>
           <Cpu size={22} className="topbar-logo-icon" />
-          <span className="topbar-logo-text">RaaS Control</span>
+          <span className="topbar-logo-text">RaaS</span>
         </div>
         <nav className="topbar-nav">
           {navItems.map(item => {

@@ -65,7 +65,7 @@ const RobotsList = () => {
   if (loading) {
     return (
       <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-mono)', color: 'var(--accent-cyan)' }}>
-        [ESTABLISHING_FLEET_COMMS...]
+        [LOADING...]
       </div>
     );
   }
@@ -73,23 +73,23 @@ const RobotsList = () => {
   return (
     <div className="robots-page">
       <div className="page-header">
-        <h1>Robot Fleet Management</h1>
+        <h1>Robot Fleet</h1>
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: '14px', color: 'var(--accent-cyan)' }}>
-          NODES CONNECTED: {robots.length}
+          CONNECTED: {robots.length}
         </div>
       </div>
 
       <div className="cyber-panel" style={{ marginBottom: '28px' }}>
         <h2 className="cyber-title">
           <Plus size={20} style={{ color: 'var(--accent-cyan)' }} />
-          Initialize New System Node
+          Add New Robot
         </h2>
         <form onSubmit={handleAddRobot} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', alignItems: 'end' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <label style={{ fontSize: '12px', textTransform: 'uppercase', color: 'var(--text-muted)', fontFamily: 'var(--font-heading)', letterSpacing: '0.5px' }}>Node Name</label>
+            <label style={{ fontSize: '12px', textTransform: 'uppercase', color: 'var(--text-muted)', fontFamily: 'var(--font-heading)', letterSpacing: '0.5px' }}>Name</label>
             <input
               type="text"
-              placeholder="e.g. ALPHA-9"
+              placeholder="e.g. Alpha-9"
               value={newRobot.name}
               onChange={(e) => setNewRobot({ ...newRobot, name: e.target.value })}
               required
@@ -98,22 +98,22 @@ const RobotsList = () => {
           </div>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <label style={{ fontSize: '12px', textTransform: 'uppercase', color: 'var(--text-muted)', fontFamily: 'var(--font-heading)', letterSpacing: '0.5px' }}>Node Core Class</label>
+            <label style={{ fontSize: '12px', textTransform: 'uppercase', color: 'var(--text-muted)', fontFamily: 'var(--font-heading)', letterSpacing: '0.5px' }}>Type</label>
             <select
               value={newRobot.type}
               onChange={(e) => setNewRobot({ ...newRobot, type: e.target.value })}
               className="cyber-select"
               style={{ width: '100%', height: '46px' }}
             >
-              <option value="warehouse">Warehouse (Kinematic Arm)</option>
-              <option value="delivery">Delivery (Drone/UAV)</option>
-              <option value="cleaning">Cleaning (Sanitation Unit)</option>
-              <option value="security">Security (Sentinel Drone)</option>
+              <option value="warehouse">Warehouse Arm</option>
+              <option value="delivery">Delivery Drone</option>
+              <option value="cleaning">Cleaning Unit</option>
+              <option value="security">Security Drone</option>
             </select>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <label style={{ fontSize: '12px', textTransform: 'uppercase', color: 'var(--text-muted)', fontFamily: 'var(--font-heading)', letterSpacing: '0.5px' }}>Sector / Location</label>
+            <label style={{ fontSize: '12px', textTransform: 'uppercase', color: 'var(--text-muted)', fontFamily: 'var(--font-heading)', letterSpacing: '0.5px' }}>Location</label>
             <input
               type="text"
               placeholder="e.g. Bay 4-A"
@@ -124,7 +124,7 @@ const RobotsList = () => {
           </div>
 
           <button type="submit" className="cyber-button" style={{ height: '46px', width: '100%' }}>
-            Deploy Node
+            Deploy
           </button>
         </form>
       </div>
@@ -132,19 +132,19 @@ const RobotsList = () => {
       <div className="robots-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
         {robots.map((robot) => (
           <div key={robot.id} className="cyber-panel" style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px dashed rgba(255,255,255,0.06)', paddingBottom: '10px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(0,0,0,0.06)', paddingBottom: '10px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <div style={{ color: 'var(--accent-cyan)', background: 'rgba(0, 240, 255, 0.08)', padding: '8px', borderRadius: '6px' }}>
+                <div style={{ color: 'var(--accent-cyan)', background: 'rgba(0, 113, 227, 0.08)', padding: '8px', borderRadius: '10px' }}>
                   {getRobotIcon(robot.type)}
                 </div>
                 <div>
-                  <h3 style={{ fontSize: '18px', fontWeight: 'bold', fontFamily: 'var(--font-heading)', letterSpacing: '0.5px' }}>{robot.name}</h3>
-                  <span style={{ fontSize: '11px', textTransform: 'uppercase', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>CLASS: {robot.type}</span>
+                  <h3 style={{ fontSize: '18px', fontWeight: '600', fontFamily: 'var(--font-heading)', letterSpacing: '-0.3px' }}>{robot.name}</h3>
+                  <span style={{ fontSize: '11px', textTransform: 'uppercase', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>{robot.type}</span>
                 </div>
               </div>
               
               <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '12px', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', color: getStatusColor(robot.status) }}>
-                <span className="status-dot" style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', backgroundColor: getStatusColor(robot.status), boxShadow: `0 0 10px ${getStatusColor(robot.status)}`, animation: (robot.status === 'online' || robot.status === 'active') ? 'pulse-green 2s infinite' : 'none' }}></span>
+                <span className="status-dot" style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', backgroundColor: getStatusColor(robot.status), boxShadow: `0 0 6px ${getStatusColor(robot.status)}` }}></span>
                 {robot.status}
               </div>
             </div>
@@ -154,19 +154,19 @@ const RobotsList = () => {
                 <span style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <MapPin size={16} /> Location
                 </span>
-                <span style={{ fontFamily: 'var(--font-mono)', color: '#fff' }}>{robot.location || 'SECTOR_UNKNOWN'}</span>
+                <span style={{ fontFamily: 'var(--font-mono)', color: '#1d1d1f' }}>{robot.location || 'Unknown'}</span>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <Battery size={16} /> Charge Level
+                    <Battery size={16} /> Battery
                   </span>
                   <span style={{ fontFamily: 'var(--font-mono)', color: robot.battery > 30 ? 'var(--accent-green)' : 'var(--accent-red)' }}>{robot.battery}%</span>
                 </div>
                 
-                <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.06)', borderRadius: '3px', overflow: 'hidden' }}>
-                  <div style={{ width: `${robot.battery}%`, height: '100%', background: robot.battery > 50 ? 'linear-gradient(90deg, var(--accent-cyan), var(--accent-green))' : robot.battery > 20 ? 'var(--accent-gold)' : 'var(--accent-red)', borderRadius: '3px', boxShadow: robot.battery > 50 ? '0 0 8px rgba(57, 255, 20, 0.4)' : 'none' }}></div>
+                <div style={{ width: '100%', height: '6px', background: 'rgba(0,0,0,0.06)', borderRadius: '3px', overflow: 'hidden' }}>
+                  <div style={{ width: `${robot.battery}%`, height: '100%', background: robot.battery > 50 ? 'linear-gradient(90deg, #0071e3, #34c759)' : robot.battery > 20 ? '#ff9500' : '#ff3b30', borderRadius: '3px' }}></div>
                 </div>
               </div>
             </div>
