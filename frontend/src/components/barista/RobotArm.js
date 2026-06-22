@@ -26,15 +26,15 @@ export class RobotArm {
   createMaterials() {
     this.materials = {
       armMetal: new THREE.MeshStandardMaterial({
-        color: 0x242d38,
-        roughness: 0.25,
-        metalness: 0.85,
-        emissive: 0x050b11,
+        color: 0x004d30, // Starbucks forest green
+        roughness: 0.15,
+        metalness: 0.8,
+        emissive: 0x001a10,
         emissiveIntensity: 0.2
       }),
       joints: new THREE.MeshStandardMaterial({
-        color: 0x3d4b5c,
-        roughness: 0.2,
+        color: 0xd4af37, // Polished Gold/Brass
+        roughness: 0.1,
         metalness: 0.9
       }),
       chrome: new THREE.MeshStandardMaterial({
@@ -43,30 +43,30 @@ export class RobotArm {
         metalness: 0.95
       }),
       accentNeon: new THREE.MeshStandardMaterial({
-        color: 0x5fe1ff,
-        emissive: 0x5fe1ff,
+        color: 0x1de9b6, // Bioluminescent mermaid seafoam
+        emissive: 0x1de9b6,
         emissiveIntensity: 1.8,
         roughness: 0.1
       }),
       accentOrange: new THREE.MeshStandardMaterial({
-        color: 0xff7733,
-        emissive: 0xff7733,
+        color: 0xe07a5f, // Sahara terracotta / clay
+        emissive: 0xe07a5f,
         emissiveIntensity: 1.2,
         roughness: 0.1
       }),
       gripper: new THREE.MeshStandardMaterial({
-        color: 0x68788c,
-        roughness: 0.3,
-        metalness: 0.6
-      }),
-      carbon: new THREE.MeshStandardMaterial({
-        color: 0x111317,
+        color: 0x3d2b1f, // Organic dark brown wood
         roughness: 0.4,
         metalness: 0.2
       }),
+      carbon: new THREE.MeshStandardMaterial({
+        color: 0x1a0f0a, // Wenge wood style
+        roughness: 0.5,
+        metalness: 0.1
+      }),
       headEye: new THREE.MeshStandardMaterial({
-        color: 0x5fe1ff,
-        emissive: 0x5fe1ff,
+        color: 0x1de9b6, // Bioluminescent mermaid seafoam
+        emissive: 0x1de9b6,
         emissiveIntensity: 2.0,
         roughness: 0.1
       })
@@ -339,41 +339,39 @@ export class RobotArm {
   setManualOverride(enable) {
     this.manualMode = enable;
     if (enable) {
-      this.setLEDColor(0xff5566);
+      this.setLEDColor(0xff5a36); // Desert sunset warning red/orange
     } else {
-      this.setLEDColor(0x5fe1ff);
+      this.setLEDColor(0x1de9b6); // Standby bioluminescent seafoam
       this.targets = { ...this.joints };
     }
   }
 
   update(dt) {
     let velocitySum = 0;
-    const baseInterpSpeed = 3.6;
-    const interpSpeed = baseInterpSpeed * this.speedMult;
+    const omega = 5.2 * this.speedMult; // Angular frequency for natural joint transition speed
 
     for (const key in this.joints) {
       if (!this.manualMode || key === 'j6') {
         const current = this.joints[key];
         const target = this.targets[key];
+        let vel = this.velocities[key] || 0;
         
-        if (Math.abs(target - current) > 0.0001) {
-          const dir = Math.sign(target - current);
-          let step = interpSpeed * dt;
+        if (Math.abs(target - current) > 0.0001 || Math.abs(vel) > 0.0001) {
+          // Critically damped spring solver: acceleration = -2*omega*v - omega^2*(x - target)
+          const diff = current - target;
+          const accel = -2.0 * omega * vel - (omega * omega) * diff;
           
-          const dist = Math.abs(target - current);
-          if (dist < 0.25) {
-            step *= (dist / 0.25);
+          vel += accel * dt;
+          let nextVal = current + vel * dt;
+          
+          // Arrived threshold
+          if (Math.abs(nextVal - target) < 0.0005 && Math.abs(vel) < 0.005) {
+            nextVal = target;
+            vel = 0;
           }
           
-          const delta = dir * Math.max(step, 0.005) * dt * 60;
-          
-          if (Math.abs(delta) >= dist) {
-            this.joints[key] = target;
-            this.velocities[key] = 0;
-          } else {
-            this.joints[key] += delta;
-            this.velocities[key] = Math.abs(delta) / dt;
-          }
+          this.joints[key] = nextVal;
+          this.velocities[key] = vel;
         } else {
           this.joints[key] = target;
           this.velocities[key] = 0;
@@ -383,7 +381,7 @@ export class RobotArm {
       }
       
       if (key !== 'j6') {
-        velocitySum += this.velocities[key];
+        velocitySum += Math.abs(this.velocities[key]);
       }
     }
 

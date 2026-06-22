@@ -50,7 +50,7 @@ const RoboBarista = () => {
   const [manualOverride, setManualOverride] = useState(false);
   const [speedMultiplier, setSpeedMultiplier] = useState(100);
   const [soundOn, setSoundOn] = useState(false);
-  const [lightingTheme, setLightingTheme] = useState('cyberpunk');
+  const [lightingTheme, setLightingTheme] = useState('jungle');
   const [loading, setLoading] = useState(true);
   const [brewingActive, setBrewingActive] = useState(false);
 
@@ -245,18 +245,18 @@ const RoboBarista = () => {
   // Theme Toggle
   const handleThemeToggle = () => {
     audio.playClick();
-    const nextTheme = lightingTheme === 'cyberpunk' ? 'warm' : 'cyberpunk';
+    const nextTheme = lightingTheme === 'jungle' ? 'sahara' : 'jungle';
     setLightingTheme(nextTheme);
 
     const scene = sceneRef.current;
-    if (nextTheme === 'warm') {
-      scene.background.setHex(0x0e0906);
-      scene.fog.color.setHex(0x0e0906);
-      addLog('Lighting theme changed to: Warm Industrial.', 'info');
+    if (nextTheme === 'sahara') {
+      scene.background.setHex(0x382c1e);
+      scene.fog.color.setHex(0x382c1e);
+      addLog('Lighting theme changed to: Sahara Oasis.', 'info');
     } else {
-      scene.background.setHex(0x05060b);
-      scene.fog.color.setHex(0x05060b);
-      addLog('Lighting theme changed to: Neon Cyberpunk.', 'info');
+      scene.background.setHex(0x14281f);
+      scene.fog.color.setHex(0x14281f);
+      addLog('Lighting theme changed to: Jumanji Jungle.', 'info');
     }
   };
 
@@ -323,8 +323,8 @@ const RoboBarista = () => {
 
     // 1. Setup Scene, Fog, Camera
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x05060b);
-    scene.fog = new THREE.FogExp2(0x05060b, 0.045);
+    scene.background = new THREE.Color(0x14281f);
+    scene.fog = new THREE.FogExp2(0x14281f, 0.045);
     sceneRef.current = scene;
 
     const camera = new THREE.PerspectiveCamera(40, container.clientWidth / container.clientHeight, 0.1, 100);
@@ -368,22 +368,22 @@ const RoboBarista = () => {
     renderer.domElement.addEventListener('wheel', stopAutoRotate);
 
     // 4. Lights
-    const ambient = new THREE.AmbientLight(0x1a243d, 0.6);
+    const ambient = new THREE.AmbientLight(0xffffff, 0.95);
     scene.add(ambient);
 
-    const keyLight = new THREE.DirectionalLight(0xffeedd, 1.0);
+    const keyLight = new THREE.DirectionalLight(0xfffaed, 1.8);
     keyLight.position.set(4, 8, 5);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.width = 512;
     keyLight.shadow.mapSize.height = 512;
     scene.add(keyLight);
 
-    const fillLight = new THREE.DirectionalLight(0x769eff, 0.4);
+    const fillLight = new THREE.DirectionalLight(0xd4eedd, 0.85);
     fillLight.position.set(-5, 4, -2);
     scene.add(fillLight);
 
     // Under-glow spotlights on the counter
-    const neonAccent = new THREE.PointLight(0x5fe1ff, 0.7, 8, 2);
+    const neonAccent = new THREE.PointLight(0x1de9b6, 1.6, 8, 2);
     neonAccent.position.set(-1.8, 1.25, 0.8);
     scene.add(neonAccent);
 
@@ -862,14 +862,14 @@ const RoboBarista = () => {
       <div className="barista-top-bar">
         <div className="system-title">
           <span className="pulse-indicator green"></span>
-          <h2>RaaS BARISTA CORE v5.0</h2>
+          <h2>SIREN & SAHARA BOTANICAL BARISTA</h2>
         </div>
         <div className="system-controls">
           <button onClick={handleSoundToggle} className={`btn-icon ${soundOn ? 'active' : ''}`}>
             {soundOn ? '🔔 AUDIO ON' : '🔕 MUTED'}
           </button>
           <button onClick={handleThemeToggle} className="btn-icon">
-            {lightingTheme === 'cyberpunk' ? '🌃 CYBERPUNK' : '☕ INDUSTRIAL'}
+            {lightingTheme === 'jungle' ? '🌴 JUMANJI JUNGLE' : '🏜️ SAHARA OASIS'}
           </button>
         </div>
       </div>
@@ -909,44 +909,44 @@ const RoboBarista = () => {
               <h3 className="section-title">DRINK BAR</h3>
               <div className="barista-drink-grid">
                 <button onClick={() => { audio.playClick(); setActiveCoffee('Espresso'); }} className={`barista-drink-card ${activeCoffee === 'Espresso' ? 'selected' : ''}`}>
-                  <span className="icon">☕</span>
-                  <span className="name">Espresso</span>
-                  <span className="desc">Intense crema shot</span>
+                  <span className="icon">🧜‍♀️</span>
+                  <span className="name">Siren's Espresso</span>
+                  <span className="desc">Intense gold crema shot</span>
                 </button>
                 <button onClick={() => { audio.playClick(); setActiveCoffee('Americano'); }} className={`barista-drink-card ${activeCoffee === 'Americano' ? 'selected' : ''}`}>
-                  <span className="icon">💧</span>
-                  <span className="name">Americano</span>
-                  <span className="desc">Espresso & hot water</span>
+                  <span className="icon">🏜️</span>
+                  <span className="name">Sahara Oasis Americano</span>
+                  <span className="desc">Espresso & hot spring water</span>
                 </button>
                 <button onClick={() => { audio.playClick(); setActiveCoffee('Latte'); }} className={`barista-drink-card ${activeCoffee === 'Latte' ? 'selected' : ''}`}>
-                  <span className="icon">🥛</span>
-                  <span className="name">Latte</span>
-                  <span className="desc">Silky milk & froth</span>
+                  <span className="icon">🌴</span>
+                  <span className="name">Jumanji Forest Latte</span>
+                  <span className="desc">Lush double shot & velvet milk</span>
                 </button>
                 <button onClick={() => { audio.playClick(); setActiveCoffee('Cappuccino'); }} className={`barista-drink-card ${activeCoffee === 'Cappuccino' ? 'selected' : ''}`}>
-                  <span className="icon">☁️</span>
-                  <span className="name">Cappuccino</span>
-                  <span className="desc">Thick, dense microfoam</span>
+                  <span className="icon">🌊</span>
+                  <span className="name">Mermaid Wave Cappuccino</span>
+                  <span className="desc">Sea-foam thick microfoam</span>
                 </button>
               </div>
 
               <h3 className="section-title">CUSTOMIZE STACK</h3>
               <div className="customizer-options">
                 <div className="control-group">
-                  <label>Bean Variant</label>
+                  <label>Bean Origin</label>
                   <div className="barista-segmented">
-                    <button onClick={() => { audio.playClick(); setActiveBean('Arabica'); }} className={`seg-btn ${activeBean === 'Arabica' ? 'active' : ''}`}>Arabica</button>
-                    <button onClick={() => { audio.playClick(); setActiveBean('Robusta'); }} className={`seg-btn ${activeBean === 'Robusta' ? 'active' : ''}`}>Robusta</button>
-                    <button onClick={() => { audio.playClick(); setActiveBean('Cyber'); }} className={`seg-btn ${activeBean === 'Cyber' ? 'active' : ''}`}>Cyber Blend</button>
+                    <button onClick={() => { audio.playClick(); setActiveBean('Arabica'); }} className={`seg-btn ${activeBean === 'Arabica' ? 'active' : ''}`}>Rainforest Arabica</button>
+                    <button onClick={() => { audio.playClick(); setActiveBean('Robusta'); }} className={`seg-btn ${activeBean === 'Robusta' ? 'active' : ''}`}>Volcanic Robusta</button>
+                    <button onClick={() => { audio.playClick(); setActiveBean('Cyber'); }} className={`seg-btn ${activeBean === 'Cyber' ? 'active' : ''}`}>Siren's Reserve</button>
                   </div>
                 </div>
 
                 <div className="control-group">
-                  <label>Milk Substitution</label>
+                  <label>Organic Milk</label>
                   <div className="barista-segmented">
-                    <button onClick={() => { audio.playClick(); setActiveMilk('Whole'); }} className={`seg-btn ${activeMilk === 'Whole' ? 'active' : ''}`}>Whole</button>
-                    <button onClick={() => { audio.playClick(); setActiveMilk('Oat'); }} className={`seg-btn ${activeMilk === 'Oat' ? 'active' : ''}`}>Oat</button>
-                    <button onClick={() => { audio.playClick(); setActiveMilk('Almond'); }} className={`seg-btn ${activeMilk === 'Almond' ? 'active' : ''}`}>Almond</button>
+                    <button onClick={() => { audio.playClick(); setActiveMilk('Whole'); }} className={`seg-btn ${activeMilk === 'Whole' ? 'active' : ''}`}>Oasis Whole</button>
+                    <button onClick={() => { audio.playClick(); setActiveMilk('Oat'); }} className={`seg-btn ${activeMilk === 'Oat' ? 'active' : ''}`}>Jungle Oat</button>
+                    <button onClick={() => { audio.playClick(); setActiveMilk('Almond'); }} className={`seg-btn ${activeMilk === 'Almond' ? 'active' : ''}`}>Desert Almond</button>
                   </div>
                 </div>
 
@@ -1094,9 +1094,9 @@ const RoboBarista = () => {
                   <button onClick={clearConsole} className="btn-small">CLEAR</button>
                 </div>
                 <div ref={consoleLogRef} className="console-log">
-                  <p className="sys">[SYSTEM] Calibration successful. System idle.</p>
-                  <p className="info">[INFO] Boilers ready at 93.4°C.</p>
-                  <p className="success">[READY] Awaiting custom order command.</p>
+                  <p className="sys">[SYSTEM] Eco-calibration successful. Botanical sensors online.</p>
+                  <p className="info">[INFO] Oasis boilers pre-heated to 93.4°C.</p>
+                  <p className="success">[READY] Siren's Barista ready for order command.</p>
                 </div>
               </div>
             </div>
