@@ -24,7 +24,7 @@ const HeroScene = () => {
       0.1,
       100
     );
-    camera.position.set(2.5, 2.25, 4.5);
+    camera.position.set(2.5, 1.8, 4.5);
 
     // ─── Renderer ───
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
@@ -43,7 +43,7 @@ const HeroScene = () => {
     controls.dampingFactor = 0.05;
     controls.minDistance = 2.5;
     controls.maxDistance = 10;
-    controls.target.set(0, 1.25, 0);
+    controls.target.set(0, 0.8, 0);
     controls.enablePan = false;
     controls.autoRotate = true;
     controls.autoRotateSpeed = 0.5;
@@ -87,7 +87,7 @@ const HeroScene = () => {
     });
     const plane = new THREE.Mesh(planeGeometry, planeMaterial);
     plane.rotation.x = -Math.PI / 2;
-    plane.position.y = 0.43;
+    plane.position.y = -0.02;
     plane.receiveShadow = true;
     scene.add(plane);
 
@@ -100,7 +100,7 @@ const HeroScene = () => {
     });
     const contactShadow = new THREE.Mesh(shadowGeometry, shadowMaterial);
     contactShadow.rotation.x = -Math.PI / 2;
-    contactShadow.position.y = 0.455;
+    contactShadow.position.y = 0.005;
     scene.add(contactShadow);
 
     // ─── Floating Particles ───
@@ -145,7 +145,7 @@ const HeroScene = () => {
         // Center the model
         const center = box.getCenter(new THREE.Vector3());
         modelGroup.position.sub(center.clone().multiplyScalar(scale));
-        modelGroup.position.y += 0.47; // just above ground
+        modelGroup.position.y += 0.02; // just above ground
 
         // Enable shadows on all meshes
         modelGroup.traverse((child) => {
