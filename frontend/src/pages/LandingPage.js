@@ -19,7 +19,7 @@ const LandingPage = ({ onLaunchApp }) => {
       {/* Navigation */}
       <nav className="landing-nav" style={{ background: scrolled ? 'rgba(7,9,14,0.95)' : 'rgba(7,9,14,0.75)' }}>
         <div className="nav-logo">
-          <Cpu size={22} style={{ color: '#06b6d4' }} />
+          <img src="/logo.png" alt="RaaS Logo" className="nav-logo-img" />
           <span>Foxglove</span> RaaS
         </div>
         <ul className="nav-links">

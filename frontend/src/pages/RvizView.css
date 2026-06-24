@@ -31,6 +31,12 @@
   cursor: pointer;
 }
 
+.rviz-logo-img {
+  height: 20px;
+  width: 20px;
+  object-fit: contain;
+}
+
 .rviz-logo-icon {
   color: #06b6d4;
   animation: pulse-glow 2.5s infinite;

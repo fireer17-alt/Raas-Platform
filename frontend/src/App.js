@@ -46,7 +46,7 @@ function App() {
           >
             <ArrowLeft size={18} />
           </button>
-          <Cpu size={22} className="topbar-logo-icon" />
+          <img src="/logo.png" alt="RaaS Logo" className="topbar-logo-img" />
           <span className="topbar-logo-text">RaaS</span>
         </div>
         <nav className="topbar-nav">

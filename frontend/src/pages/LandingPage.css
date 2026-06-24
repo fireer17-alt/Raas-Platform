@@ -49,6 +49,12 @@
   gap: 10px;
 }
 
+.landing-nav .nav-logo-img {
+  height: 28px;
+  width: 28px;
+  object-fit: contain;
+}
+
 .landing-nav .nav-logo span {
   background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
   -webkit-background-clip: text;

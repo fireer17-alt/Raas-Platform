@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, useMemo } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { 
-  Play, Pause, RefreshCw, Activity, Info, SkipBack, SkipForward, 
+  Play, Pause, RefreshCw, Info, SkipBack, SkipForward, 
   Volume2, VolumeX, ChevronDown, Settings, Maximize2, List 
 } from 'lucide-react';
 import { RobotArm } from '../components/barista/RobotArm.js';
@@ -563,7 +563,7 @@ const RvizView = () => {
       {/* ─── Top Control Bar (Replica of Foxglove header) ─── */}
       <div className="rviz-control-bar">
         <div className="rviz-logo" onClick={() => setSelectedTopic('robot')}>
-          <Activity size={18} className="rviz-logo-icon" />
+          <img src="/logo.png" alt="RaaS Logo" className="rviz-logo-img" />
           <span>RaaS Platform</span>
           <span className="layout-badge">example-017-droid-ds.mcap</span>
         </div>
