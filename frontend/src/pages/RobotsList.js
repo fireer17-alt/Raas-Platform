@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Cpu, Battery, MapPin, Plus, Shield, Truck, RefreshCw } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 const RobotsList = () => {
   const [robots, setRobots] = useState([]);
@@ -13,7 +14,7 @@ const RobotsList = () => {
 
   const fetchRobots = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/robots');
+      const res = await axios.get(`${API_BASE_URL}/api/robots`);
       setRobots(res.data);
       setLoading(false);
     } catch (error) {
@@ -25,7 +26,7 @@ const RobotsList = () => {
   const handleAddRobot = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/robots', newRobot);
+      await axios.post(`${API_BASE_URL}/api/robots`, newRobot);
       setNewRobot({ name: '', type: 'warehouse', location: '' });
       fetchRobots();
     } catch (error) {

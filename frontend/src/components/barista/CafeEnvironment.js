@@ -25,40 +25,40 @@ export class CafeEnvironment {
   createMaterials() {
     this.materials = {
       marble: new THREE.MeshStandardMaterial({
-        color: 0x181a22,
+        color: 0x07291a, // Starbucks Emerald Green marble
         roughness: 0.08,
         metalness: 0.1,
         bumpScale: 0.01
       }),
       wood: new THREE.MeshStandardMaterial({
-        color: 0x221a15,
+        color: 0x3d2010, // Teak / Mahogany dark wood
         roughness: 0.7,
         metalness: 0.05
       }),
       brass: new THREE.MeshStandardMaterial({
-        color: 0xcca662,
+        color: 0xd4af37, // Polished gold/brass
         roughness: 0.15,
         metalness: 0.85
       }),
       iron: new THREE.MeshStandardMaterial({
-        color: 0x2e353d,
+        color: 0x1e1510, // Dark antique iron / bronze
         roughness: 0.4,
         metalness: 0.7
       }),
       glass: new THREE.MeshStandardMaterial({
-        color: 0x88ccff,
+        color: 0x7be2cf, // Sea glass (seafoam/aqua)
         transparent: true,
-        opacity: 0.25,
+        opacity: 0.35,
         roughness: 0.05,
-        metalness: 0.1
+        metalness: 0.15
       }),
       neonSign: new THREE.MeshBasicMaterial({
-        color: 0xff7733
+        color: 0xd4af37 // Warm golden/brass neon sign backing
       }),
       gridLine: new THREE.MeshBasicMaterial({
-        color: 0x00ccff,
+        color: 0x1d3827, // Soft jungle green grid lines
         transparent: true,
-        opacity: 0.15
+        opacity: 0.2
       }),
       fluidEspresso: new THREE.MeshStandardMaterial({
         color: 0x2b1506,
@@ -83,14 +83,14 @@ export class CafeEnvironment {
         metalness: 0.95
       }),
       accentNeon: new THREE.MeshStandardMaterial({
-        color: 0x5fe1ff,
-        emissive: 0x5fe1ff,
+        color: 0x1de9b6, // Bioluminescent mermaid seafoam
+        emissive: 0x1de9b6,
         emissiveIntensity: 1.8,
         roughness: 0.1
       }),
       accentOrange: new THREE.MeshStandardMaterial({
-        color: 0xff7733,
-        emissive: 0xff7733,
+        color: 0xe07a5f, // Sahara terracotta / clay
+        emissive: 0xe07a5f,
         emissiveIntensity: 1.2,
         roughness: 0.1
       })
@@ -100,16 +100,16 @@ export class CafeEnvironment {
   buildRoom() {
     const size = 32;
     const divisions = 32;
-    const gridHelper = new THREE.GridHelper(size, divisions, 0x5fe1ff, 0x1d2c38);
+    const gridHelper = new THREE.GridHelper(size, divisions, 0x1d3827, 0x06110a);
     gridHelper.position.y = 0.01;
     this.scene.add(gridHelper);
 
     const ground = new THREE.Mesh(
       new THREE.PlaneGeometry(size, size),
       new THREE.MeshStandardMaterial({
-        color: 0x05060a,
-        roughness: 0.22,
-        metalness: 0.8
+        color: 0x040a08, // Deep mossy forest ground
+        roughness: 0.35,
+        metalness: 0.5
       })
     );
     ground.rotation.x = -Math.PI / 2;
@@ -118,7 +118,7 @@ export class CafeEnvironment {
 
     const wallGeo = new THREE.CylinderGeometry(14, 14, 10, 32, 1, true, -Math.PI / 2, Math.PI);
     const wallMat = new THREE.MeshStandardMaterial({
-      color: 0x090a12,
+      color: 0x060f0c, // Dense forest atmosphere wall
       roughness: 0.9,
       metalness: 0.1,
       side: THREE.BackSide
@@ -129,7 +129,7 @@ export class CafeEnvironment {
 
     const signBox = new THREE.Mesh(
       new THREE.BoxGeometry(4.2, 0.8, 0.1),
-      new THREE.MeshStandardMaterial({ color: 0x111322, roughness: 0.5 })
+      new THREE.MeshStandardMaterial({ color: 0x180d05, roughness: 0.5 })
     );
     signBox.position.set(0, 6.2, -6.5);
     this.scene.add(signBox);
@@ -141,7 +141,7 @@ export class CafeEnvironment {
     signTextBack.position.set(0, 6.2, -6.44);
     this.scene.add(signTextBack);
     
-    const signLight = new THREE.PointLight(0xff7733, 1.2, 10, 1.5);
+    const signLight = new THREE.PointLight(0xd4af37, 2.5, 12, 1.2);
     signLight.position.set(0, 6.2, -6.0);
     this.scene.add(signLight);
   }
@@ -168,7 +168,7 @@ export class CafeEnvironment {
     basePlate.position.z = 0.3;
     this.scene.add(basePlate);
 
-    const ledStrip = new THREE.PointLight(0x5fe1ff, 0.8, 5, 2);
+    const ledStrip = new THREE.PointLight(0x1de9b6, 1.8, 7, 1.5);
     ledStrip.position.set(0, 1.15, 1.6);
     this.scene.add(ledStrip);
   }
@@ -303,7 +303,7 @@ export class CafeEnvironment {
       bulb.position.y = -3.65;
       g.add(bulb);
 
-      const light = new THREE.PointLight(color, 1.4, 6.5, 1.8);
+      const light = new THREE.PointLight(color, 3.2, 8.5, 1.5);
       light.position.y = -3.75;
       g.add(light);
 
@@ -436,7 +436,7 @@ export class CafeEnvironment {
 
     this.splashParticles = [];
     const splashMat = new THREE.MeshBasicMaterial({
-      color: 0xffaa44,
+      color: 0xd4af37, // Golden splash droplets
       transparent: true,
       opacity: 0.8
     });

@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import './App.css';
-import { LayoutDashboard, Cpu, ListTodo, CreditCard, Coffee, ArrowLeft } from 'lucide-react';
+import { LayoutDashboard, Cpu, ListTodo, CreditCard, Coffee, ArrowLeft, Eye } from 'lucide-react';
 import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
 import RobotsList from './pages/RobotsList';
 import TaskManager from './pages/TaskManager';
 import Billing from './pages/Billing';
 import RoboBarista from './pages/RoboBarista';
+import RvizView from './pages/RvizView';
 
 function App() {
   const [mode, setMode] = useState('landing'); // 'landing' | 'app'
@@ -19,15 +20,17 @@ function App() {
   const pages = {
     dashboard: <Dashboard />,
     robots: <RobotsList />,
+    barista: <RoboBarista />,
+    rviz: <RvizView />,
     tasks: <TaskManager />,
-    billing: <Billing />,
-    barista: <RoboBarista />
+    billing: <Billing />
   };
 
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'robots', label: 'Fleet', icon: Cpu },
     { id: 'barista', label: 'Barista', icon: Coffee },
+    { id: 'rviz', label: 'RViz', icon: Eye },
     { id: 'tasks', label: 'Tasks', icon: ListTodo },
     { id: 'billing', label: 'Billing', icon: CreditCard },
   ];
@@ -43,7 +46,7 @@ function App() {
           >
             <ArrowLeft size={18} />
           </button>
-          <Cpu size={22} className="topbar-logo-icon" />
+          <img src="/logo.png" alt="RaaS Logo" className="topbar-logo-img" />
           <span className="topbar-logo-text">RaaS</span>
         </div>
         <nav className="topbar-nav">
@@ -67,7 +70,7 @@ function App() {
         </div>
       </header>
 
-      <main className={`main-content ${currentPage === 'barista' ? 'main-content-immersive' : ''}`}>
+      <main className={`main-content ${(currentPage === 'barista' || currentPage === 'rviz') ? 'main-content-immersive' : ''}`}>
         {pages[currentPage]}
       </main>
     </div>

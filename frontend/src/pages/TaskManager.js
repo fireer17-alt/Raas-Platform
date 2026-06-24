@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { ListTodo, Cpu, AlertTriangle, Calendar, Plus, Play, CheckCircle2, Clock } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 const TaskManager = () => {
   const [tasks, setTasks] = useState([]);
@@ -15,8 +16,8 @@ const TaskManager = () => {
   const fetchData = async () => {
     try {
       const [tasksRes, robotsRes] = await Promise.all([
-        axios.get('http://localhost:5000/api/tasks'),
-        axios.get('http://localhost:5000/api/robots')
+        axios.get(`${API_BASE_URL}/api/tasks`),
+        axios.get(`${API_BASE_URL}/api/robots`)
       ]);
       setTasks(tasksRes.data);
       setRobots(robotsRes.data);
@@ -30,7 +31,7 @@ const TaskManager = () => {
   const handleCreateTask = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/tasks', newTask);
+      await axios.post(`${API_BASE_URL}/api/tasks`, newTask);
       setNewTask({ name: '', robotId: '', priority: 'medium', dueDate: '' });
       fetchData();
     } catch (error) {

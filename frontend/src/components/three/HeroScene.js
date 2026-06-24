@@ -1,235 +1,226 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 const HeroScene = () => {
   const mountRef = useRef(null);
-  const rendererRef = useRef(null);
-  const requestRef = useRef(null);
+  const [loading, setLoading] = useState(true);
+  const [loadProgress, setLoadProgress] = useState(0);
 
   useEffect(() => {
     const container = mountRef.current;
     if (!container) return;
 
-    // Scene setup
+    // ─── Scene ───
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xf5f5f7);
+    scene.background = new THREE.Color(0x07090e);
+    scene.fog = new THREE.Fog(0x07090e, 8, 20);
 
-    const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
-    camera.position.set(0, 1, 5);
+    // ─── Camera ───
+    const camera = new THREE.PerspectiveCamera(
+      40,
+      container.clientWidth / container.clientHeight,
+      0.1,
+      100
+    );
+    camera.position.set(2.5, 1.8, 4.5);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    // ─── Renderer ───
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.2;
+    renderer.toneMappingExposure = 1.15;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
     container.appendChild(renderer.domElement);
-    rendererRef.current = renderer;
 
-    // Lighting - Apple style soft lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    // ─── Controls ───
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.minDistance = 2.5;
+    controls.maxDistance = 10;
+    controls.target.set(0, 0.8, 0);
+    controls.enablePan = false;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.5;
+    controls.maxPolarAngle = Math.PI / 2 + 0.1;
+
+    // Stop auto-rotate on user interaction
+    controls.addEventListener('start', () => { controls.autoRotate = false; });
+
+    // ─── Apple-style Lighting ───
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
     scene.add(ambientLight);
 
     const keyLight = new THREE.DirectionalLight(0xffffff, 1.2);
-    keyLight.position.set(5, 8, 5);
+    keyLight.position.set(4, 8, 5);
     keyLight.castShadow = true;
-    keyLight.shadow.mapSize.width = 1024;
-    keyLight.shadow.mapSize.height = 1024;
+    keyLight.shadow.mapSize.set(2048, 2048);
     keyLight.shadow.camera.near = 0.1;
-    keyLight.shadow.camera.far = 20;
+    keyLight.shadow.camera.far = 25;
+    keyLight.shadow.bias = -0.0001;
+    keyLight.shadow.radius = 4;
     scene.add(keyLight);
 
-    const fillLight = new THREE.DirectionalLight(0xe8e8ff, 0.4);
-    fillLight.position.set(-5, 3, -2);
+    const fillLight = new THREE.DirectionalLight(0x7c3aed, 0.4); // soft purple fill
+    fillLight.position.set(-5, 3, -3);
     scene.add(fillLight);
 
-    const rimLight = new THREE.DirectionalLight(0xffeedd, 0.3);
-    rimLight.position.set(0, 2, -5);
+    const rimLight = new THREE.DirectionalLight(0x06b6d4, 0.5); // cyan rim highlight
+    rimLight.position.set(-2, 2, -5);
     scene.add(rimLight);
 
-    // Robot Arm Group
-    const robotGroup = new THREE.Group();
-    scene.add(robotGroup);
+    const bottomLight = new THREE.PointLight(0x06b6d4, 0.2, 10);
+    bottomLight.position.set(0, -1, 2);
+    scene.add(bottomLight);
 
-    // Materials - Apple style aluminum + glass
-    const aluminumMaterial = new THREE.MeshStandardMaterial({
-      color: 0xd0d0d5,
-      metalness: 0.9,
-      roughness: 0.15,
-      envMapIntensity: 1.0
+    // ─── Ground Grid Helper (Robotics look) ───
+    const gridHelper = new THREE.GridHelper(20, 25, 0x06b6d4, 0x1f2937);
+    gridHelper.position.y = -0.01;
+    scene.add(gridHelper);
+
+    // ─── Ground Plane (reflection) ───
+    const planeGeometry = new THREE.PlaneGeometry(20, 20);
+    const planeMaterial = new THREE.MeshStandardMaterial({
+      color: 0x0d121f,
+      roughness: 0.9,
+      metalness: 0.1,
     });
+    const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+    plane.rotation.x = -Math.PI / 2;
+    plane.position.y = -0.02;
+    plane.receiveShadow = true;
+    scene.add(plane);
 
-    const darkMetalMaterial = new THREE.MeshStandardMaterial({
-      color: 0x2c2c2e,
-      metalness: 0.8,
-      roughness: 0.2
+    // ─── Contact Shadow (fake soft shadow) ───
+    const shadowGeometry = new THREE.CircleGeometry(1.2, 64);
+    const shadowMaterial = new THREE.MeshBasicMaterial({
+      color: 0x000000,
+      transparent: true,
+      opacity: 0.4,
     });
+    const contactShadow = new THREE.Mesh(shadowGeometry, shadowMaterial);
+    contactShadow.rotation.x = -Math.PI / 2;
+    contactShadow.position.y = 0.005;
+    scene.add(contactShadow);
 
-    const jointMaterial = new THREE.MeshStandardMaterial({
-      color: 0x1a1a1c,
-      metalness: 0.7,
-      roughness: 0.3
-    });
-
-    const accentMaterial = new THREE.MeshStandardMaterial({
-      color: 0x0071e3,
-      metalness: 0.3,
-      roughness: 0.2,
-      emissive: 0x0071e3,
-      emissiveIntensity: 0.3
-    });
-
-    // Base
-    const baseGeometry = new THREE.CylinderGeometry(0.5, 0.6, 0.2, 32);
-    const base = new THREE.Mesh(baseGeometry, darkMetalMaterial);
-    base.position.y = -1.5;
-    base.castShadow = true;
-    base.receiveShadow = true;
-    robotGroup.add(base);
-
-    // Base accent ring
-    const ringGeometry = new THREE.TorusGeometry(0.52, 0.02, 16, 64);
-    const ring = new THREE.Mesh(ringGeometry, accentMaterial);
-    ring.position.y = -1.4;
-    ring.rotation.x = Math.PI / 2;
-    robotGroup.add(ring);
-
-    // Shoulder joint
-    const shoulderJointGeometry = new THREE.SphereGeometry(0.22, 32, 32);
-    const shoulderJoint = new THREE.Mesh(shoulderJointGeometry, jointMaterial);
-    shoulderJoint.position.y = -1.3;
-    robotGroup.add(shoulderJoint);
-
-    // Upper arm
-    const upperArmGeometry = new THREE.CylinderGeometry(0.12, 0.12, 1.2, 16);
-    const upperArm = new THREE.Mesh(upperArmGeometry, aluminumMaterial);
-    upperArm.position.y = -0.6;
-    upperArm.castShadow = true;
-    robotGroup.add(upperArm);
-
-    // Elbow joint
-    const elbowJointGeometry = new THREE.SphereGeometry(0.18, 32, 32);
-    const elbowJoint = new THREE.Mesh(elbowJointGeometry, jointMaterial);
-    elbowJoint.position.y = 0;
-    robotGroup.add(elbowJoint);
-
-    // Forearm
-    const forearmGeometry = new THREE.CylinderGeometry(0.1, 0.1, 1.0, 16);
-    const forearm = new THREE.Mesh(forearmGeometry, aluminumMaterial);
-    forearm.position.y = 0.6;
-    forearm.castShadow = true;
-    robotGroup.add(forearm);
-
-    // Wrist joint
-    const wristJointGeometry = new THREE.SphereGeometry(0.14, 32, 32);
-    const wristJoint = new THREE.Mesh(wristJointGeometry, jointMaterial);
-    wristJoint.position.y = 1.1;
-    robotGroup.add(wristJoint);
-
-    // Gripper base
-    const gripperBaseGeometry = new THREE.CylinderGeometry(0.15, 0.12, 0.3, 16);
-    const gripperBase = new THREE.Mesh(gripperBaseGeometry, darkMetalMaterial);
-    gripperBase.position.y = 1.3;
-    gripperBase.castShadow = true;
-    robotGroup.add(gripperBase);
-
-    // Gripper fingers
-    const fingerGeometry = new THREE.BoxGeometry(0.04, 0.3, 0.08);
-    const leftFinger = new THREE.Mesh(fingerGeometry, aluminumMaterial);
-    leftFinger.position.set(-0.08, 1.55, 0);
-    leftFinger.rotation.z = 0.1;
-    robotGroup.add(leftFinger);
-
-    const rightFinger = new THREE.Mesh(fingerGeometry, aluminumMaterial);
-    rightFinger.position.set(0.08, 1.55, 0);
-    rightFinger.rotation.z = -0.1;
-    robotGroup.add(rightFinger);
-
-    // LED indicator on gripper
-    const ledGeometry = new THREE.SphereGeometry(0.03, 16, 16);
-    const led = new THREE.Mesh(ledGeometry, accentMaterial);
-    led.position.set(0, 1.45, 0.12);
-    robotGroup.add(led);
-
-    // Floating particles
+    // ─── Floating Particles ───
     const particlesGeometry = new THREE.BufferGeometry();
-    const particleCount = 60;
+    const particleCount = 80;
     const positions = new Float32Array(particleCount * 3);
-    const particleSpeeds = [];
-
     for (let i = 0; i < particleCount; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 6;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 4;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 4;
-      particleSpeeds.push({
-        x: (Math.random() - 0.5) * 0.002,
-        y: (Math.random() - 0.5) * 0.002,
-        z: (Math.random() - 0.5) * 0.002
-      });
+      positions[i * 3] = (Math.random() - 0.5) * 8;
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 5 + 1;
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 8;
     }
-
     particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     const particlesMaterial = new THREE.PointsMaterial({
       color: 0x0071e3,
-      size: 0.02,
+      size: 0.025,
       transparent: true,
-      opacity: 0.6
+      opacity: 0.4,
     });
     const particles = new THREE.Points(particlesGeometry, particlesMaterial);
     scene.add(particles);
 
-    // Ground reflection plane
-    const planeGeometry = new THREE.PlaneGeometry(10, 10);
-    const planeMaterial = new THREE.MeshStandardMaterial({
-      color: 0xf5f5f7,
-      roughness: 0.8,
-      metalness: 0.1
-    });
-    const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-    plane.rotation.x = -Math.PI / 2;
-    plane.position.y = -2;
-    plane.receiveShadow = true;
-    scene.add(plane);
+    // ─── Load GLB Model ───
+    let modelGroup = null;
+    let mixer = null;
+    let clock = new THREE.Clock();
+    let idleTime = 0;
+    let animFrameId = null;
 
-    // Animation
-    let time = 0;
+    const loader = new GLTFLoader();
+    loader.load(
+      '/models/robot_arm_animation.glb',
+      (gltf) => {
+        modelGroup = gltf.scene;
+
+        // Scale and position
+        const box = new THREE.Box3().setFromObject(modelGroup);
+        const size = box.getSize(new THREE.Vector3());
+        const maxDim = Math.max(size.x, size.y, size.z);
+        const scale = 1.8 / maxDim;
+        modelGroup.scale.setScalar(scale);
+
+        // Center the model
+        const center = box.getCenter(new THREE.Vector3());
+        modelGroup.position.sub(center.clone().multiplyScalar(scale));
+        modelGroup.position.y += 0.02; // just above ground
+
+        // Enable shadows on all meshes
+        modelGroup.traverse((child) => {
+          if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            // Improve materials
+            if (child.material) {
+              child.material.envMapIntensity = 1.0;
+            }
+          }
+        });
+
+        scene.add(modelGroup);
+
+        // ─── Animation ───
+        if (gltf.animations && gltf.animations.length > 0) {
+          mixer = new THREE.AnimationMixer(modelGroup);
+          const action = mixer.clipAction(gltf.animations[0]);
+          action.setEffectiveTimeScale(0.6); // slow it down for elegance
+          action.play();
+        }
+
+        setLoading(false);
+      },
+      (xhr) => {
+        const progress = Math.round((xhr.loaded / xhr.total) * 100);
+        setLoadProgress(progress);
+      },
+      (error) => {
+        console.error('Error loading GLB model:', error);
+        setLoading(false);
+      }
+    );
+
+    // ─── Animation Loop ───
     const animate = () => {
-      time += 0.005;
+      animFrameId = requestAnimationFrame(animate);
+      const dt = clock.getDelta();
 
-      // Gentle floating animation
-      robotGroup.position.y = Math.sin(time) * 0.1;
-      robotGroup.rotation.y = Math.sin(time * 0.5) * 0.15;
+      if (mixer) mixer.update(dt);
 
-      // LED pulse
-      const pulseIntensity = 0.3 + Math.sin(time * 3) * 0.2;
-      led.material.emissiveIntensity = pulseIntensity;
+      // Idle: resume auto-rotate after 6 seconds of inactivity
+      idleTime += dt;
+      if (!controls.autoRotate && idleTime > 6.0) {
+        controls.autoRotate = true;
+      }
+      controls.update();
 
-      // Ring glow
-      ring.material.emissiveIntensity = 0.2 + Math.sin(time * 2) * 0.1;
-
-      // Particles movement
+      // Particle drift
+      particles.rotation.y += 0.0003;
       const posArray = particles.geometry.attributes.position.array;
       for (let i = 0; i < particleCount; i++) {
-        posArray[i * 3] += particleSpeeds[i].x;
-        posArray[i * 3 + 1] += particleSpeeds[i].y;
-        posArray[i * 3 + 2] += particleSpeeds[i].z;
-
-        // Reset if too far
-        if (Math.abs(posArray[i * 3]) > 3) particleSpeeds[i].x *= -1;
-        if (Math.abs(posArray[i * 3 + 1]) > 2) particleSpeeds[i].y *= -1;
-        if (Math.abs(posArray[i * 3 + 2]) > 2) particleSpeeds[i].z *= -1;
+        posArray[i * 3 + 1] += Math.sin(clock.elapsedTime + i) * 0.0003;
       }
       particles.geometry.attributes.position.needsUpdate = true;
-      particles.rotation.y += 0.001;
+
+      // Contact shadow breathes with model
+      if (modelGroup) {
+        contactShadow.scale.setScalar(
+          1 + Math.sin(clock.elapsedTime * 0.5) * 0.05
+        );
+      }
 
       renderer.render(scene, camera);
-      requestRef.current = requestAnimationFrame(animate);
     };
 
     animate();
 
-    // Resize handler
+    // ─── Resize Handler ───
     const handleResize = () => {
       if (!container) return;
       camera.aspect = container.clientWidth / container.clientHeight;
@@ -238,15 +229,56 @@ const HeroScene = () => {
     };
     window.addEventListener('resize', handleResize);
 
+    // ─── Cleanup ───
     return () => {
       window.removeEventListener('resize', handleResize);
-      cancelAnimationFrame(requestRef.current);
+      cancelAnimationFrame(animFrameId);
+      if (mixer) mixer.stopAllAction();
+      controls.dispose();
       renderer.dispose();
-      container.removeChild(renderer.domElement);
+      if (container.contains(renderer.domElement)) {
+        container.removeChild(renderer.domElement);
+      }
     };
   }, []);
 
-  return <div ref={mountRef} style={{ width: '100%', height: '100%' }} />;
+  return (
+    <div ref={mountRef} style={{ width: '100%', height: '100%', position: 'relative' }}>
+      {loading && (
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 10,
+            background: '#07090e',
+          }}
+        >
+          <div
+            style={{
+              width: '40px',
+              height: '40px',
+              border: '3px solid rgba(6, 182, 212, 0.15)',
+              borderTop: '3px solid #06b6d4',
+              borderRadius: '50%',
+              animation: 'spin 1s linear infinite',
+              marginBottom: '16px',
+            }}
+          />
+          <div style={{ fontSize: '13px', color: '#9ca3af', fontFamily: 'monospace', fontWeight: 500 }}>
+            INITIALIZING SIM_NODE... {loadProgress}%
+          </div>
+        </div>
+      )}
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+    </div>
+  );
 };
 
 export default HeroScene;

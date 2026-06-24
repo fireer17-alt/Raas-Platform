@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Cpu, Activity, ListTodo, Zap } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
@@ -16,8 +17,8 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const robotsRes = await axios.get('http://localhost:5000/api/robots');
-        const tasksRes = await axios.get('http://localhost:5000/api/tasks');
+        const robotsRes = await axios.get(`${API_BASE_URL}/api/robots`);
+        const tasksRes = await axios.get(`${API_BASE_URL}/api/tasks`);
 
         setStats({
           totalRobots: robotsRes.data.length,
@@ -153,6 +154,50 @@ const Dashboard = () => {
               />
             </LineChart>
           </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div className="cyber-panel" style={{ marginTop: '28px', background: 'linear-gradient(135deg, #0d121f 0%, #07090e 100%)', border: '1px solid rgba(124, 58, 237, 0.25)', boxShadow: '0 8px 32px rgba(124, 58, 237, 0.05)' }}>
+        <h2 className="cyber-title" style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.08)', color: '#f3f4f6' }}>
+          <Activity size={20} style={{ color: 'var(--accent-purple)' }} />
+          Foxglove Live Observability Node
+        </h2>
+        <div style={{ padding: '40px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
+          <div style={{ fontSize: '44px', marginBottom: '16px' }}>🛰️</div>
+          <h3 style={{ fontSize: '20px', fontWeight: 700, color: '#f3f4f6', marginBottom: '8px' }}>Security Handshake Required</h3>
+          <p style={{ fontSize: '14px', color: '#9ca3af', maxWidth: '520px', margin: '0 auto 24px', lineHeight: 1.6 }}>
+            Foxglove Studio's security policy restricts cross-origin iframe rendering to prevent clickjacking. Launch the layout workspace in a secure tab to inspect your physical AI stream records.
+          </p>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 200px)', gap: '16px', margin: '0 auto 28px', fontFamily: 'monospace', fontSize: '11px', textAlign: 'left' }}>
+            <div style={{ padding: '10px', background: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.05)', borderRadius: '4px' }}>
+              <span style={{ color: '#9ca3af' }}>NODE:</span> <span style={{ color: '#06b6d4' }}>jeevan-h-r</span>
+            </div>
+            <div style={{ padding: '10px', background: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.05)', borderRadius: '4px' }}>
+              <span style={{ color: '#9ca3af' }}>STREAM_ID:</span> <span style={{ color: '#06b6d4' }}>rec_0dtkuuK...</span>
+            </div>
+          </div>
+
+          <a
+            href="https://app.foxglove.dev/jeevan-h-r/view?ds=foxglove-sample-stream&ds.recordingId=rec_0dtkuuK43PadKny8&layoutId=f1366b1a-0e21-4c96-95f8-570a7325cb1f"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="cyber-button"
+            style={{ 
+              background: 'linear-gradient(135deg, var(--accent-purple), #6d28d9)', 
+              color: '#fff', 
+              textDecoration: 'none', 
+              padding: '12px 32px', 
+              borderRadius: '6px', 
+              fontWeight: 600,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              boxShadow: '0 4px 15px rgba(124, 58, 237, 0.45)'
+            }}
+          >
+            Launch Observability Node ↗
+          </a>
         </div>
       </div>
     </div>

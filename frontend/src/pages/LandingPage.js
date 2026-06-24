@@ -1,14 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './LandingPage.css';
-import HeroScene from '../components/three/HeroScene';
-import { Cpu, Zap, Shield, BarChart3, Coffee, Globe, ArrowRight, ChevronDown } from 'lucide-react';
+import { Cpu, Zap, Shield, BarChart3, Coffee, Globe, ArrowRight } from 'lucide-react';
 
 const LandingPage = ({ onLaunchApp }) => {
   const [scrolled, setScrolled] = useState(false);
-  const heroRef = useRef(null);
-  const featuresRef = useRef(null);
-  const showcaseRef = useRef(null);
-  const ctaRef = useRef(null);
+  const [activeMockTab, setActiveMockTab] = useState('telemetry');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -18,160 +14,235 @@ const LandingPage = ({ onLaunchApp }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const scrollTo = (ref) => {
-    ref.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
   return (
     <div className="landing-page">
       {/* Navigation */}
-      <nav className="landing-nav" style={{ background: scrolled ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.72)' }}>
+      <nav className="landing-nav" style={{ background: scrolled ? 'rgba(7,9,14,0.95)' : 'rgba(7,9,14,0.75)' }}>
         <div className="nav-logo">
-          <Cpu size={22} style={{ color: '#0071e3' }} />
-          RaaS
+          <img src="/logo.png" alt="RaaS Logo" className="nav-logo-img" />
+          <span>Foxglove</span> RaaS
         </div>
         <ul className="nav-links">
-          <li><button className="nav-link-btn" onClick={() => scrollTo(featuresRef)}>Features</button></li>
-          <li><button className="nav-link-btn" onClick={() => scrollTo(showcaseRef)}>Showcase</button></li>
-          <li><button className="nav-link-btn" onClick={() => scrollTo(ctaRef)}>Pricing</button></li>
+          <li><button className="nav-link-btn">Product</button></li>
+          <li><button className="nav-link-btn">Solutions</button></li>
+          <li><button className="nav-link-btn">Resources</button></li>
+          <li><button className="nav-link-btn">Customers</button></li>
+          <li><button className="nav-link-btn">Pricing</button></li>
         </ul>
-        <button className="nav-cta" onClick={onLaunchApp}>
-          Launch App
-        </button>
+        <div className="nav-actions">
+          <button className="nav-signin" onClick={onLaunchApp}>Sign in</button>
+          <button className="nav-cta" onClick={onLaunchApp}>
+            Get started for free
+          </button>
+        </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="hero-section" ref={heroRef}>
-        <div className="hero-scene-container">
-          <HeroScene />
-        </div>
+      <section className="hero-section">
         <div className="hero-content animate-fade-in-up">
-          <div className="hero-label">RaaS Platform</div>
+          <div className="hero-label">PHYSICAL AI OBSERVABILITY PLATFORM</div>
           <h1>
-            Robotics.<br />
-            <span className="gradient-text">Redefined.</span>
+            Scale <span>Physical AI</span><br />
+            from prototype to production.
           </h1>
-          <p className="hero-subtitle">Robots as a Service</p>
           <p className="hero-desc">
-            Deploy, manage, and scale your robot fleet with the most advanced
-            cloud-native robotics platform. From warehouse automation to autonomous baristas.
+            RaaS is the multimodal data platform for robotics and autonomy. Capture and visualize data 
+            from your fleet, search across every log, and curate datasets to train your next model.
           </p>
           <div className="hero-buttons">
             <button className="hero-btn-primary" onClick={onLaunchApp}>
-              Launch App <ArrowRight size={18} />
+              Get started for free <ArrowRight size={18} />
             </button>
-            <button className="hero-btn-secondary" onClick={() => scrollTo(featuresRef)}>
-              Learn More
+            <button className="hero-btn-secondary" onClick={onLaunchApp}>
+              Book a demo
             </button>
           </div>
         </div>
-        <div style={{ position: 'absolute', bottom: '30px', zIndex: 2, animation: 'bounce 2s infinite' }}>
-          <ChevronDown size={24} color="#86868b" style={{ cursor: 'pointer' }} onClick={() => scrollTo(featuresRef)} />
+
+        {/* Video Frame */}
+        <div className="hero-video-container">
+          <video 
+            className="hero-video" 
+            loop 
+            autoPlay 
+            muted 
+            playsInline 
+            preload="metadata"
+          >
+            <source src="https://assets.foxglove.dev/website/Home_hero_2024.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
         </div>
       </section>
 
-      {/* Stats Bar */}
-      <div className="stats-bar">
-        <div className="stat-item">
-          <div className="stat-number">500+</div>
-          <div className="stat-label">Active Robots</div>
-        </div>
-        <div className="stat-item">
-          <div className="stat-number">99.9%</div>
-          <div className="stat-label">Uptime</div>
-        </div>
-        <div className="stat-item">
-          <div className="stat-number">&lt;50ms</div>
-          <div className="stat-label">Latency</div>
-        </div>
-        <div className="stat-item">
-          <div className="stat-number">24/7</div>
-          <div className="stat-label">Monitoring</div>
-        </div>
-      </div>
-
-      {/* Features Section */}
-      <section className="feature-section feature-section-alt" ref={featuresRef}>
-        <div className="section-label">Core Features</div>
-        <h2 className="section-title">Everything you need to<br />run a robot fleet.</h2>
-        <p className="section-desc">
-          From real-time telemetry to autonomous task scheduling, RaaS gives you complete control over every robot in your fleet.
-        </p>
-        <div className="feature-grid">
-          <div className="feature-card">
-            <div className="feature-icon blue"><Cpu size={24} /></div>
-            <h3>Fleet Management</h3>
-            <p>Monitor and control hundreds of robots from a single dashboard. Real-time status, battery levels, and location tracking.</p>
-          </div>
-          <div className="feature-card">
-            <div className="feature-icon green"><Zap size={24} /></div>
-            <h3>Task Scheduling</h3>
-            <p>Intelligent task queue with priority-based routing. Assign missions to the nearest available robot automatically.</p>
-          </div>
-          <div className="feature-card">
-            <div className="feature-icon orange"><BarChart3 size={24} /></div>
-            <h3>Analytics</h3>
-            <p>Deep insights into fleet performance, utilization rates, and operational efficiency with beautiful telemetry graphs.</p>
-          </div>
-          <div className="feature-card">
-            <div className="feature-icon purple"><Shield size={24} /></div>
-            <h3>Enterprise Security</h3>
-            <p>End-to-end encrypted communication, role-based access control, and compliance-ready audit logging.</p>
-          </div>
-          <div className="feature-card">
-            <div className="feature-icon red"><Coffee size={24} /></div>
-            <h3>Autonomous Barista</h3>
-            <p>Full 3D simulation of a 6-DOF robotic arm preparing coffee with real-time physics and customization options.</p>
-          </div>
-          <div className="feature-card">
-            <div className="feature-icon cyan"><Globe size={24} /></div>
-            <h3>Global Scale</h3>
-            <p>Multi-region deployment with automatic failover. Scale from one robot to thousands without infrastructure changes.</p>
-          </div>
+      {/* Customer Logos Bar */}
+      <section className="logos-section">
+        <h2>Leading Physical AI companies build with RaaS</h2>
+        <div className="logos-track">
+          <div className="logo-item">AESCAPE</div>
+          <div className="logo-item">DEXORY</div>
+          <div className="logo-item">WAYVE</div>
+          <div className="logo-item">DEXTERITY</div>
+          <div className="logo-item">COBOT</div>
+          <div className="logo-item"><span>NVIDIA</span></div>
         </div>
       </section>
 
-      {/* Showcase Section */}
-      <section className="showcase-section" ref={showcaseRef}>
-        <div className="section-label">Live Dashboard</div>
-        <h2 className="section-title">See your fleet in action.</h2>
+      {/* Observability Showcase Tab Workspace */}
+      <section className="showcase-section">
+        <div className="section-label">Workspace Preview</div>
+        <h2 className="section-title">Observe, debug, and improve your robots.</h2>
         <p className="section-desc">
-          A beautiful, intuitive interface designed for operators who need to make decisions fast.
+          Inspect timelines, view active metrics channels, and examine topic lists via the interactive console panel.
         </p>
         <div className="showcase-visual">
           <div className="showcase-device">
             <div className="showcase-device-inner">
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '56px', marginBottom: '16px' }}>🤖</div>
-                <h3 style={{ fontSize: '24px', marginBottom: '8px', fontWeight: 600 }}>RaaS Dashboard</h3>
-                <p style={{ fontSize: '16px', color: '#86868b' }}>Real-time fleet telemetry, task queues, and billing — all in one place.</p>
-                <button 
-                  className="hero-btn-primary" 
-                  style={{ marginTop: '24px' }}
-                  onClick={onLaunchApp}
-                >
-                  Open Dashboard
-                </button>
+              <div className="tech-mockup">
+                <div className="tech-sidebar">
+                  <div 
+                    className={`tech-nav-item ${activeMockTab === 'telemetry' ? 'active' : ''}`}
+                    onClick={() => setActiveMockTab('telemetry')}
+                  >
+                    📈 Telemetry Channels
+                  </div>
+                  <div 
+                    className={`tech-nav-item ${activeMockTab === 'diagnostics' ? 'active' : ''}`}
+                    onClick={() => setActiveMockTab('diagnostics')}
+                  >
+                    📋 Live Diagnostics Logs
+                  </div>
+                  <div 
+                    className={`tech-nav-item ${activeMockTab === 'config' ? 'active' : ''}`}
+                    onClick={() => setActiveMockTab('config')}
+                  >
+                    ⚙️ ROS Config Node
+                  </div>
+                </div>
+                <div className="tech-content">
+                  {activeMockTab === 'telemetry' && (
+                    <div>
+                      <div className="mockup-graphs">
+                        <div className="mockup-card">
+                          <div className="mockup-label">Scan rate</div>
+                          <div className="mockup-value">120 Hz</div>
+                          <div className="mockup-sub">Nominal</div>
+                        </div>
+                        <div className="mockup-card">
+                          <div className="mockup-label">Bandwidth</div>
+                          <div className="mockup-value">14.8 MB/s</div>
+                          <div className="mockup-sub">Standard throughput</div>
+                        </div>
+                        <div className="mockup-card">
+                          <div className="mockup-label">Latency</div>
+                          <div className="mockup-value">22 ms</div>
+                          <div className="mockup-sub">Low jitter</div>
+                        </div>
+                      </div>
+                      <h4 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '8px' }}>Active Observer State</h4>
+                      <p style={{ fontSize: '14px', color: '#9ca3af', lineHeight: 1.5 }}>
+                        Visualization telemetry parameters connected via local ROS bridges. Inspect active sensor updates automatically.
+                      </p>
+                    </div>
+                  )}
+
+                  {activeMockTab === 'diagnostics' && (
+                    <div style={{ fontFamily: 'monospace', fontSize: '12px', background: 'rgba(0,0,0,0.4)', padding: '16px', borderRadius: '4px', border: '1px solid var(--border-subtle)', height: '200px', overflowY: 'auto' }}>
+                      <p style={{ color: '#10b981', margin: '4px 0' }}>[INFO] [rosbridge_websocket]: Client connection authenticated successfully.</p>
+                      <p style={{ color: '#f59e0b', margin: '4px 0' }}>[WARN] [battery_node]: Voltage cell 4 drop detected. Threshold nominal.</p>
+                      <p style={{ color: '#63b3ed', margin: '4px 0' }}>[DEBUG] [telemetry_publisher]: Publishing topic odom coordinate.</p>
+                      <p style={{ color: '#10b981', margin: '4px 0' }}>[INFO] [action_server]: Waypoint navigation goal accomplished.</p>
+                      <p style={{ color: '#9ca3af', margin: '4px 0' }}>[TRACE] [telemetry_publisher]: Packet payload: 412 bytes.</p>
+                    </div>
+                  )}
+
+                  {activeMockTab === 'config' && (
+                    <div style={{ fontFamily: 'monospace', fontSize: '12px', background: 'rgba(0,0,0,0.4)', padding: '16px', borderRadius: '4px', border: '1px solid var(--border-subtle)', height: '200px', overflowY: 'auto' }}>
+                      <pre style={{ color: '#06b6d4', margin: 0 }}>{JSON.stringify({
+  "node_name": "raas_telemetry_bridge",
+  "version": "2.4.1",
+  "parameters": {
+    "rosbridge_url": "ws://localhost:9090",
+    "reconnect_timeout_ms": 5000,
+    "topics": {
+      "telemetry": "/robot/telemetry",
+      "command": "/robot/command",
+      "laser_scan": "/robot/scan"
+    },
+    "enable_compression": true,
+    "max_queue_size": 100
+  }
+}, null, 2)}</pre>
+                    </div>
+                  )}
+
+                  <div style={{ marginTop: '24px' }}>
+                    <button className="hero-btn-primary" onClick={onLaunchApp}>
+                      Launch Console Workspace
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
+      {/* Purpose Features Grid */}
+      <section className="feature-section feature-section-alt">
+        <div className="section-label">Core Capabilities</div>
+        <h2 className="section-title">Observe, debug, and improve.</h2>
+        <p className="section-desc">
+          Custom built for physical AI automation fleets. Track active units from a centralized panel.
+        </p>
+        <div className="feature-grid">
+          <div className="feature-card">
+            <div className="feature-icon blue"><Cpu size={24} /></div>
+            <h3>Multimodal Telemetry</h3>
+            <p>Inspect multi-topic streams, coordinates, battery limits, and network status indexes live.</p>
+          </div>
+          <div className="feature-card">
+            <div className="feature-icon green"><Zap size={24} /></div>
+            <h3>Orchestrator Node</h3>
+            <p>Coordinate autonomous task routes and robot actions. Automatically handles network lag and failover.</p>
+          </div>
+          <div className="feature-card">
+            <div className="feature-icon orange"><BarChart3 size={24} /></div>
+            <h3>Diagnostic Analytics</h3>
+            <p>Plot custom telemetry streams, inspect timelines, and isolate latency graphs instantly.</p>
+          </div>
+          <div className="feature-card">
+            <div className="feature-icon purple"><Shield size={24} /></div>
+            <h3>Secure Tunnel</h3>
+            <p>Complies with enterprise security: end-to-end payload encryption and token access bounds.</p>
+          </div>
+          <div className="feature-card">
+            <div className="feature-icon red"><Coffee size={24} /></div>
+            <h3>3D Sim WebGL</h3>
+            <p>Live WebGL rendering of a 6-DOF barista arm simulation with direct forward kinematics resolution.</p>
+          </div>
+          <div className="feature-card">
+            <div className="feature-icon cyan"><Globe size={24} /></div>
+            <h3>Stripe Sandbox Tier</h3>
+            <p>Seamless Stripe checkout sandbox integrations. Easily upgrade to access unlimited nodes and telemetry channels.</p>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
-      <section className="cta-section" ref={ctaRef}>
+      <section className="cta-section">
         <div className="cta-content">
-          <h2>Ready to deploy your fleet?</h2>
-          <p>Start with our free tier and scale as you grow. No credit card required.</p>
+          <h2>Ready to orchestrate your fleet?</h2>
+          <p>Get started with our free tier, connect up to 5 devices, and scale seamlessly.</p>
           <button className="hero-btn-primary" onClick={onLaunchApp}>
-            Get Started Free
+            Get started for free
           </button>
         </div>
       </section>
 
       {/* Footer */}
       <footer className="landing-footer">
-        © 2026 RaaS Platform. All rights reserved.
+        © 2026 Foxglove RaaS Platform. All rights reserved.
       </footer>
     </div>
   );

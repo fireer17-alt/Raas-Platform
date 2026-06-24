@@ -1,15 +1,38 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { CreditCard, Check, Award } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 const Billing = () => {
   const [subscription, setSubscription] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [notification, setNotification] = useState(null);
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('session_id')) {
+      setNotification({
+        type: 'success',
+        message: 'PRO PROTOCOL ACTIVATED: Payment authorization complete and subscription status synchronized.'
+      });
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (params.get('mock_action') === 'cancel') {
+      setNotification({
+        type: 'warning',
+        message: 'SUBSCRIPTION TERMINATED: Returned to Free tier operations.'
+      });
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (params.get('cancelled') === 'true') {
+      setNotification({
+        type: 'info',
+        message: 'TRANSACTION CANCELLED: Stripe Checkout process aborted by operator.'
+      });
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
     const fetchBilling = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/billing/subscription');
+        const res = await axios.get(`${API_BASE_URL}/api/billing/subscription`);
         setSubscription(res.data);
         setLoading(false);
       } catch (error) {
@@ -20,6 +43,42 @@ const Billing = () => {
 
     fetchBilling();
   }, []);
+
+  const handleUpgrade = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.post(`${API_BASE_URL}/api/billing/create-checkout-session`, {
+        userId: 'global-user'
+      });
+      if (res.data && res.data.url) {
+        window.location.href = res.data.url;
+      } else {
+        throw new Error('No redirection URL returned from server.');
+      }
+    } catch (error) {
+      console.error('Redirection error:', error);
+      alert('Failed to initiate checkout process. Please check server logs.');
+      setLoading(false);
+    }
+  };
+
+  const handleManagePortal = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.post(`${API_BASE_URL}/api/billing/create-portal-session`, {
+        userId: 'global-user'
+      });
+      if (res.data && res.data.url) {
+        window.location.href = res.data.url;
+      } else {
+        throw new Error('No portal URL returned from server.');
+      }
+    } catch (error) {
+      console.error('Portal error:', error);
+      alert('Failed to access subscription portal: ' + (error.response?.data?.error || error.message));
+      setLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -76,6 +135,37 @@ const Billing = () => {
           BILLING PROTOCOL: ENCRYPTED
         </div>
       </div>
+
+      {notification && (
+        <div style={{
+          padding: '16px',
+          borderRadius: '6px',
+          background: notification.type === 'success' ? 'rgba(0, 240, 255, 0.1)' : notification.type === 'warning' ? 'rgba(255, 170, 68, 0.1)' : 'rgba(255, 255, 255, 0.05)',
+          border: `1px solid ${notification.type === 'success' ? 'var(--accent-cyan)' : notification.type === 'warning' ? 'var(--accent-gold)' : 'var(--text-muted)'}`,
+          color: notification.type === 'success' ? 'var(--accent-cyan)' : notification.type === 'warning' ? 'var(--accent-gold)' : 'var(--text-primary)',
+          fontFamily: 'var(--font-mono)',
+          fontSize: '14px',
+          marginBottom: '24px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
+          <div>{notification.message}</div>
+          <button 
+            onClick={() => setNotification(null)}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'inherit',
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+              fontWeight: 'bold'
+            }}
+          >
+            [DISMISS]
+          </button>
+        </div>
+      )}
 
       {subscription && (
         <div className="cyber-panel" style={{ marginBottom: '28px', padding: '28px' }}>
@@ -149,6 +239,7 @@ const Billing = () => {
               flexDirection: 'column', 
               gap: '18px', 
               borderTop: `4px solid ${plan.borderColor}`,
+              position: 'relative',
               ...(plan.recommended ? {
                 border: '1px solid var(--accent-cyan)',
                 boxShadow: '0 0 20px rgba(0, 240, 255, 0.15)'
@@ -175,17 +266,44 @@ const Billing = () => {
             
             <button 
               className="cyber-button" 
+              onClick={() => {
+                if (plan.name === 'Enterprise') {
+                  window.location.href = 'mailto:support@smaratara.com?subject=Enterprise%20Plan%20Inquiry';
+                } else if (plan.name === 'Pro') {
+                  if (subscription.plan === 'pro') {
+                    handleManagePortal();
+                  } else {
+                    handleUpgrade();
+                  }
+                } else if (plan.name === 'Free') {
+                  if (subscription.plan === 'pro') {
+                    handleManagePortal();
+                  }
+                }
+              }}
+              disabled={plan.name === 'Free' && subscription.plan === 'free'}
               style={{ 
                 marginTop: 'auto', 
                 width: '100%', 
                 height: '42px',
+                cursor: (plan.name === 'Free' && subscription.plan === 'free') ? 'not-allowed' : 'pointer',
+                opacity: (plan.name === 'Free' && subscription.plan === 'free') ? 0.6 : 1,
                 ...(plan.name === 'Enterprise' ? {
                   background: 'linear-gradient(135deg, var(--accent-gold) 0%, rgba(255, 170, 68, 0.5) 100%)',
                   boxShadow: '0 0 10px rgba(255, 170, 68, 0.3)'
+                } : {}),
+                ...(plan.name === 'Free' && subscription.plan === 'free' ? {
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  color: 'var(--text-muted)'
                 } : {})
               }}
             >
-              {plan.name === 'Enterprise' ? 'Establish Contact' : plan.name === 'Pro' ? 'Activate Pro Protocol' : 'Get Started'}
+              {plan.name === 'Enterprise' 
+                ? 'Establish Contact' 
+                : plan.name === 'Pro' 
+                  ? (subscription.plan === 'pro' ? 'Manage Subscription' : 'Activate Pro Protocol') 
+                  : (subscription.plan === 'free' ? 'Active Protocol' : 'Downgrade (via Portal)')}
             </button>
           </div>
         ))}
