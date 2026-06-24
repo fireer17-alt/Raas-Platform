@@ -14,8 +14,8 @@ const HeroScene = () => {
 
     // ─── Scene ───
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xf5f5f7);
-    scene.fog = new THREE.Fog(0xf5f5f7, 8, 20);
+    scene.background = new THREE.Color(0x07090e);
+    scene.fog = new THREE.Fog(0x07090e, 8, 20);
 
     // ─── Camera ───
     const camera = new THREE.PerspectiveCamera(
@@ -53,10 +53,10 @@ const HeroScene = () => {
     controls.addEventListener('start', () => { controls.autoRotate = false; });
 
     // ─── Apple-style Lighting ───
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
     scene.add(ambientLight);
 
-    const keyLight = new THREE.DirectionalLight(0xffffff, 1.4);
+    const keyLight = new THREE.DirectionalLight(0xffffff, 1.2);
     keyLight.position.set(4, 8, 5);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.set(2048, 2048);
@@ -66,24 +66,29 @@ const HeroScene = () => {
     keyLight.shadow.radius = 4;
     scene.add(keyLight);
 
-    const fillLight = new THREE.DirectionalLight(0xdde4ff, 0.5);
+    const fillLight = new THREE.DirectionalLight(0x7c3aed, 0.4); // soft purple fill
     fillLight.position.set(-5, 3, -3);
     scene.add(fillLight);
 
-    const rimLight = new THREE.DirectionalLight(0xffeedd, 0.4);
+    const rimLight = new THREE.DirectionalLight(0x06b6d4, 0.5); // cyan rim highlight
     rimLight.position.set(-2, 2, -5);
     scene.add(rimLight);
 
-    const bottomLight = new THREE.PointLight(0x0071e3, 0.15, 10);
+    const bottomLight = new THREE.PointLight(0x06b6d4, 0.2, 10);
     bottomLight.position.set(0, -1, 2);
     scene.add(bottomLight);
+
+    // ─── Ground Grid Helper (Robotics look) ───
+    const gridHelper = new THREE.GridHelper(20, 25, 0x06b6d4, 0x1f2937);
+    gridHelper.position.y = -0.01;
+    scene.add(gridHelper);
 
     // ─── Ground Plane (reflection) ───
     const planeGeometry = new THREE.PlaneGeometry(20, 20);
     const planeMaterial = new THREE.MeshStandardMaterial({
-      color: 0xf5f5f7,
-      roughness: 0.85,
-      metalness: 0.05,
+      color: 0x0d121f,
+      roughness: 0.9,
+      metalness: 0.1,
     });
     const plane = new THREE.Mesh(planeGeometry, planeMaterial);
     plane.rotation.x = -Math.PI / 2;
@@ -96,7 +101,7 @@ const HeroScene = () => {
     const shadowMaterial = new THREE.MeshBasicMaterial({
       color: 0x000000,
       transparent: true,
-      opacity: 0.15,
+      opacity: 0.4,
     });
     const contactShadow = new THREE.Mesh(shadowGeometry, shadowMaterial);
     contactShadow.rotation.x = -Math.PI / 2;
@@ -252,22 +257,22 @@ const HeroScene = () => {
             alignItems: 'center',
             justifyContent: 'center',
             zIndex: 10,
-            background: '#f5f5f7',
+            background: '#07090e',
           }}
         >
           <div
             style={{
               width: '40px',
               height: '40px',
-              border: '3px solid rgba(0, 113, 227, 0.15)',
-              borderTop: '3px solid #0071e3',
+              border: '3px solid rgba(6, 182, 212, 0.15)',
+              borderTop: '3px solid #06b6d4',
               borderRadius: '50%',
               animation: 'spin 1s linear infinite',
               marginBottom: '16px',
             }}
           />
-          <div style={{ fontSize: '14px', color: '#86868b', fontWeight: 500 }}>
-            Loading Model... {loadProgress}%
+          <div style={{ fontSize: '13px', color: '#9ca3af', fontFamily: 'monospace', fontWeight: 500 }}>
+            INITIALIZING SIM_NODE... {loadProgress}%
           </div>
         </div>
       )}
