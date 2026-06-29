@@ -2,15 +2,12 @@ const express = require('express');
 const router = express.Router();
 const { db } = require('../config/firebase');
 const { pubsub } = require('../config/pubsub');
-
-const mockRobots = [
-  { id: 'robot-1', name: 'Warehouse Bot 1', type: 'warehouse', status: 'online', battery: 85, location: 'Warehouse A' }
-];
+const localDb = require('../config/localDb');
 
 router.get('/', async (req, res) => {
   try {
     if (!db) {
-      return res.json(mockRobots);
+      return res.json(localDb.getRobots());
     }
     const robots = await db.collection('robots').get();
     const robotList = robots.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -25,16 +22,7 @@ router.post('/', async (req, res) => {
     const { name, type, location } = req.body;
     
     if (!db) {
-      const newRobotObj = {
-        id: `robot-${Date.now()}`,
-        name: name || 'Alpha-Unit',
-        type: type || 'warehouse',
-        location: location || 'Bay 1',
-        status: 'online',
-        battery: 100,
-        createdAt: new Date()
-      };
-      mockRobots.unshift(newRobotObj);
+      const newRobotObj = localDb.addRobot({ name, type, location });
       return res.json({ id: newRobotObj.id, message: 'Robot deployed successfully', robot: newRobotObj });
     }
     
@@ -56,7 +44,8 @@ router.post('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     if (!db) {
-      const found = mockRobots.find(r => r.id === req.params.id) || mockRobots[0];
+      const robots = localDb.getRobots();
+      const found = robots.find(r => r.id === req.params.id) || robots[0];
       return res.json(found);
     }
     const robot = await db.collection('robots').doc(req.params.id).get();

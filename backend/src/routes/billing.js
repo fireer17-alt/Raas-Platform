@@ -2,19 +2,7 @@ const express = require('express');
 const router = express.Router();
 const stripe = require('../config/stripe');
 const { db } = require('../config/firebase');
-
-// In-memory subscription store for local fallback/mock mode
-const mockSubscriptions = {
-  'global-user': {
-    plan: 'free',
-    credits: 100,
-    creditsUsed: 25,
-    robots: 5,
-    robotsLimit: 10,
-    stripeCustomerId: null,
-    features: ['Basic monitoring', 'Task scheduling', '1 GB storage']
-  }
-};
+const localDb = require('../config/localDb');
 
 const getUserSubscription = async (userId) => {
   if (db) {
@@ -39,18 +27,7 @@ const getUserSubscription = async (userId) => {
     }
   }
   
-  if (!mockSubscriptions[userId]) {
-    mockSubscriptions[userId] = {
-      plan: 'free',
-      credits: 100,
-      creditsUsed: 25,
-      robots: 5,
-      robotsLimit: 10,
-      stripeCustomerId: null,
-      features: ['Basic monitoring', 'Task scheduling', '1 GB storage']
-    };
-  }
-  return mockSubscriptions[userId];
+  return localDb.getSubscription(userId);
 };
 
 const updateUserSubscription = async (userId, plan, stripeCustomerId = null) => {
@@ -69,22 +46,7 @@ const updateUserSubscription = async (userId, plan, stripeCustomerId = null) => 
     }
   }
   
-  if (!mockSubscriptions[userId]) {
-    mockSubscriptions[userId] = {};
-  }
-  mockSubscriptions[userId].plan = plan;
-  if (stripeCustomerId) {
-    mockSubscriptions[userId].stripeCustomerId = stripeCustomerId;
-  }
-  if (plan === 'pro') {
-    mockSubscriptions[userId].credits = 1000;
-    mockSubscriptions[userId].robotsLimit = 50;
-    mockSubscriptions[userId].features = ['50 Active Robots', '1000 Monthly Credits', 'Advanced Analytics', '100 GB Data Storage', 'Priority 24/7 Support'];
-  } else {
-    mockSubscriptions[userId].credits = 100;
-    mockSubscriptions[userId].robotsLimit = 10;
-    mockSubscriptions[userId].features = ['Basic monitoring', 'Task scheduling', '1 GB storage'];
-  }
+  return localDb.updateSubscription(userId, plan, stripeCustomerId);
 };
 
 const findUserIdByCustomerId = async (customerId) => {
@@ -98,10 +60,9 @@ const findUserIdByCustomerId = async (customerId) => {
       console.error('Error looking up customer ID in DB:', e);
     }
   }
-  for (const userId in mockSubscriptions) {
-    if (mockSubscriptions[userId].stripeCustomerId === customerId) {
-      return userId;
-    }
+  const sub = localDb.getSubscription('global-user');
+  if (sub && sub.stripeCustomerId === customerId) {
+    return 'global-user';
   }
   return 'global-user';
 };

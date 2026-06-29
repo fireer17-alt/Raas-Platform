@@ -1,15 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const { db } = require('../config/firebase');
-
-const mockTasks = [
-  { id: 'task-1', name: 'Pick and place items', robotId: 'robot-1', status: 'pending', priority: 'high', dueDate: 'ASAP' }
-];
+const localDb = require('../config/localDb');
 
 router.get('/', async (req, res) => {
   try {
     if (!db) {
-      return res.json(mockTasks);
+      return res.json(localDb.getTasks());
     }
     const tasks = await db.collection('tasks').get();
     const taskList = tasks.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -24,16 +21,7 @@ router.post('/', async (req, res) => {
     const { name, robotId, priority, dueDate } = req.body;
     
     if (!db) {
-      const newTaskObj = {
-        id: `task-${Date.now()}`,
-        name: name || 'Autonomous Routine Task',
-        robotId: robotId || 'unassigned',
-        priority: priority || 'medium',
-        dueDate: dueDate || 'ASAP',
-        status: 'pending',
-        createdAt: new Date()
-      };
-      mockTasks.unshift(newTaskObj);
+      const newTaskObj = localDb.addTask({ name, robotId, priority, dueDate });
       return res.json({ id: newTaskObj.id, message: 'Task created successfully', task: newTaskObj });
     }
     
