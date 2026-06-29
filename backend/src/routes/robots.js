@@ -3,10 +3,14 @@ const router = express.Router();
 const { db } = require('../config/firebase');
 const { pubsub } = require('../config/pubsub');
 
+const mockRobots = [
+  { id: 'robot-1', name: 'Warehouse Bot 1', type: 'warehouse', status: 'online', battery: 85, location: 'Warehouse A' }
+];
+
 router.get('/', async (req, res) => {
   try {
     if (!db) {
-      return res.json([{ id: 'mock-1', name: 'Warehouse Bot 1', type: 'warehouse', status: 'online', battery: 85, location: 'Warehouse A' }]);
+      return res.json(mockRobots);
     }
     const robots = await db.collection('robots').get();
     const robotList = robots.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -21,19 +25,29 @@ router.post('/', async (req, res) => {
     const { name, type, location } = req.body;
     
     if (!db) {
-      return res.json({ id: 'mock-robot', message: 'Mock: Robot registered (database not connected)' });
+      const newRobotObj = {
+        id: `robot-${Date.now()}`,
+        name: name || 'Alpha-Unit',
+        type: type || 'warehouse',
+        location: location || 'Bay 1',
+        status: 'online',
+        battery: 100,
+        createdAt: new Date()
+      };
+      mockRobots.unshift(newRobotObj);
+      return res.json({ id: newRobotObj.id, message: 'Robot deployed successfully', robot: newRobotObj });
     }
     
     const docRef = await db.collection('robots').add({
       name,
       type,
       location,
-      status: 'offline',
+      status: 'online',
       battery: 100,
       createdAt: new Date(),
       telemetry: []
     });
-    res.json({ id: docRef.id, message: 'Robot registered' });
+    res.json({ id: docRef.id, message: 'Robot deployed successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -42,7 +56,8 @@ router.post('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     if (!db) {
-      return res.json({ id: req.params.id, name: 'Mock Robot', type: 'warehouse', status: 'online', battery: 85 });
+      const found = mockRobots.find(r => r.id === req.params.id) || mockRobots[0];
+      return res.json(found);
     }
     const robot = await db.collection('robots').doc(req.params.id).get();
     if (!robot.exists) {
