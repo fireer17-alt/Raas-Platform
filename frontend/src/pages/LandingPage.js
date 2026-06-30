@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import './LandingPage.css';
 import { Cpu, Zap, Shield, BarChart3, Coffee, Globe, ArrowRight } from 'lucide-react';
 
 const LandingPage = ({ onLaunchApp }) => {
   const [scrolled, setScrolled] = useState(false);
   const [activeMockTab, setActiveMockTab] = useState('telemetry');
+  const [activeNav, setActiveNav] = useState(null);
+  const canvasRef   = useRef(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -14,21 +16,188 @@ const LandingPage = ({ onLaunchApp }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // ─── Particle Canvas ───
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let animId;
+
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resize();
+    window.addEventListener('resize', resize);
+
+    const PARTICLE_COUNT = 90;
+    const particles = Array.from({ length: PARTICLE_COUNT }, () => ({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      r: Math.random() * 1.8 + 0.4,
+      vx: (Math.random() - 0.5) * 0.35,
+      vy: -(Math.random() * 0.4 + 0.1),
+      alpha: Math.random() * 0.5 + 0.15,
+      hue: Math.random() < 0.55 ? 270 : 190,   // purple or cyan
+    }));
+
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw connection lines
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 120) {
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(124,58,237,${0.08 * (1 - dist / 120)})`;
+            ctx.lineWidth = 0.6;
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Draw particles
+      particles.forEach(p => {
+        const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 3);
+        gradient.addColorStop(0, `hsla(${p.hue},80%,70%,${p.alpha})`);
+        gradient.addColorStop(1, `hsla(${p.hue},80%,70%,0)`);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r * 3, 0, Math.PI * 2);
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        // Update position
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // Wrap around
+        if (p.y < -10) { p.y = canvas.height + 10; p.x = Math.random() * canvas.width; }
+        if (p.x < -10) p.x = canvas.width + 10;
+        if (p.x > canvas.width + 10) p.x = -10;
+      });
+
+      animId = requestAnimationFrame(draw);
+    };
+
+    draw();
+    return () => {
+      cancelAnimationFrame(animId);
+      window.removeEventListener('resize', resize);
+    };
+  }, []);
+
   return (
     <div className="landing-page">
+      <canvas ref={canvasRef} className="particle-canvas" />
       {/* Navigation */}
       <nav className="landing-nav" style={{ background: scrolled ? 'rgba(7,9,14,0.95)' : 'rgba(7,9,14,0.75)' }}>
         <div className="nav-logo">
           <img src="/logo.png" alt="ForaMetric Logo" className="nav-logo-img" />
           <span>ForaMetric</span>
         </div>
-        <ul className="nav-links">
-          <li><button className="nav-link-btn">Product</button></li>
-          <li><button className="nav-link-btn">Solutions</button></li>
-          <li><button className="nav-link-btn">Resources</button></li>
-          <li><button className="nav-link-btn">Customers</button></li>
-          <li><button className="nav-link-btn">Pricing</button></li>
-        </ul>
+        <ul
+            className="nav-links"
+            onMouseLeave={() => setActiveNav(null)}
+          >
+            {[
+              { id: 'product',   label: 'Product' },
+              { id: 'solutions', label: 'Solutions' },
+              { id: 'resources', label: 'Resources' },
+              { id: 'customers', label: 'Customers' },
+              { id: 'pricing',   label: 'Pricing' },
+            ].map(item => (
+              <li key={item.id} onMouseEnter={() => setActiveNav(item.id)}>
+                <button className={`nav-link-btn ${activeNav === item.id ? 'nav-link-btn--active' : ''}`}>
+                  {item.label} <span className="nav-chevron">{activeNav === item.id ? '▲' : '▼'}</span>
+                </button>
+              </li>
+            ))}
+
+            {/* ── Unified Mega Dropdown ── */}
+            {activeNav && (
+              <div className="mega-dropdown">
+
+                {/* ── PRICING TAB ── */}
+                {activeNav === 'pricing' && (
+                  <>
+                    <div className="pcd-header">
+                      <span className="pcd-icon">▤</span>
+                      <span>Subscription Catalog</span>
+                    </div>
+                    <div className="pcd-grid">
+                      <div className="pcd-card">
+                        <div className="pcd-tier">TIER 01</div>
+                        <div className="pcd-name">FREE</div>
+                        <div className="pcd-price"><span>$0</span><sub>/month</sub></div>
+                        <ul className="pcd-features">
+                          <li>✓ 5 Active Robots</li>
+                          <li>✓ 100 Monthly Credits</li>
+                          <li>✓ Basic Monitoring</li>
+                          <li>✓ 1 GB Data Storage</li>
+                        </ul>
+                        <button className="pcd-btn pcd-btn-ghost" onClick={onLaunchApp}>Active Protocol</button>
+                      </div>
+                      <div className="pcd-card pcd-card-pro">
+                        <div className="pcd-recommended">RECOMMENDED</div>
+                        <div className="pcd-tier" style={{color:'#06b6d4'}}>TIER 02</div>
+                        <div className="pcd-name" style={{color:'#06b6d4'}}>PRO</div>
+                        <div className="pcd-price pcd-price-pro"><span>$29</span><sub>/month</sub></div>
+                        <ul className="pcd-features">
+                          <li>✓ 50 Active Robots</li>
+                          <li>✓ 1000 Monthly Credits</li>
+                          <li>✓ Advanced Analytics</li>
+                          <li>✓ 100 GB Data Storage</li>
+                          <li>✓ Priority 24/7 Support</li>
+                        </ul>
+                        <button className="pcd-btn pcd-btn-pro" onClick={onLaunchApp}>Activate Pro Protocol</button>
+                      </div>
+                      <div className="pcd-card pcd-card-business">
+                        <div className="pcd-tier" style={{color:'#7c3aed'}}>TIER 03</div>
+                        <div className="pcd-name" style={{color:'#7c3aed'}}>BUSINESS</div>
+                        <div className="pcd-price"><span>$50</span><sub>/month</sub></div>
+                        <ul className="pcd-features">
+                          <li>✓ 150 Active Robots</li>
+                          <li>✓ 3000 Monthly Credits</li>
+                          <li>✓ Team Workspace &amp; RBAC</li>
+                          <li>✓ 500 GB Data Storage</li>
+                          <li>✓ 24/7 Priority SLA &amp; Support</li>
+                        </ul>
+                        <button className="pcd-btn pcd-btn-business" onClick={onLaunchApp}>Activate Business Protocol</button>
+                      </div>
+                      <div className="pcd-card pcd-card-enterprise">
+                        <div className="pcd-tier" style={{color:'#f59e0b'}}>TIER 04</div>
+                        <div className="pcd-name" style={{color:'#f59e0b'}}>ENTERPRISE</div>
+                        <div className="pcd-price pcd-price-enterprise"><span>CUSTOM</span></div>
+                        <ul className="pcd-features">
+                          <li>✓ Unlimited Robots</li>
+                          <li>✓ Unlimited Monthly Credits</li>
+                          <li>✓ Full REST/Websocket API</li>
+                          <li>✓ Dedicated Systems Engineer</li>
+                          <li>✓ Custom SLA &amp; Integrations</li>
+                        </ul>
+                        <button className="pcd-btn pcd-btn-enterprise" onClick={onLaunchApp}>Establish Contact</button>
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {/* ── OTHER TABS (placeholders) ── */}
+                {activeNav !== 'pricing' && (
+                  <div className="mega-placeholder">
+                    <div className="mega-placeholder-icon">🚧</div>
+                    <div className="mega-placeholder-title">{activeNav.charAt(0).toUpperCase() + activeNav.slice(1)}</div>
+                    <div className="mega-placeholder-sub">Content coming soon. Check back later.</div>
+                  </div>
+                )}
+
+              </div>
+            )}
+          </ul>
         <div className="nav-actions">
           <button className="nav-signin" onClick={onLaunchApp}>Sign in</button>
           <button className="nav-cta" onClick={onLaunchApp}>
@@ -229,7 +398,87 @@ const LandingPage = ({ onLaunchApp }) => {
         </div>
       </section>
 
+
+      {/* Pricing Section */}
+      <section className="pricing-section">
+        <div className="section-label">Pricing</div>
+        <h2 className="section-title">Simple, transparent pricing.</h2>
+        <p className="section-desc">
+          Start free, scale as your fleet grows. No hidden fees, cancel anytime.
+        </p>
+        <div className="pricing-grid">
+
+          {/* Free */}
+          <div className="pricing-card">
+            <div className="pricing-tier-label">Starter</div>
+            <div className="pricing-price">
+              <span className="pricing-amount">$0</span>
+              <span className="pricing-period">/ month</span>
+            </div>
+            <p className="pricing-tagline">Perfect for individual developers and small projects.</p>
+            <ul className="pricing-features">
+              <li><span className="check">✓</span> Up to <strong>3 robots</strong></li>
+              <li><span className="check">✓</span> 100 telemetry credits / mo</li>
+              <li><span className="check">✓</span> Basic Fleet Dashboard</li>
+              <li><span className="check">✓</span> Task Manager (10 tasks)</li>
+              <li><span className="check">✓</span> Community support</li>
+              <li><span className="muted">✗</span> ROS Bridge integration</li>
+              <li><span className="muted">✗</span> Priority support</li>
+            </ul>
+            <button className="pricing-btn pricing-btn-outline" onClick={onLaunchApp}>
+              Get started free
+            </button>
+          </div>
+
+          {/* Pro — highlighted */}
+          <div className="pricing-card pricing-card-featured">
+            <div className="pricing-badge">Most Popular</div>
+            <div className="pricing-tier-label">Pro</div>
+            <div className="pricing-price">
+              <span className="pricing-amount">$49</span>
+              <span className="pricing-period">/ month</span>
+            </div>
+            <p className="pricing-tagline">For growing teams deploying autonomous fleets.</p>
+            <ul className="pricing-features">
+              <li><span className="check">✓</span> Up to <strong>25 robots</strong></li>
+              <li><span className="check">✓</span> 5,000 telemetry credits / mo</li>
+              <li><span className="check">✓</span> Full Fleet Dashboard</li>
+              <li><span className="check">✓</span> Unlimited task scheduling</li>
+              <li><span className="check">✓</span> ROS Bridge integration</li>
+              <li><span className="check">✓</span> Real-time diagnostics logs</li>
+              <li><span className="check">✓</span> Email support (24h SLA)</li>
+            </ul>
+            <button className="pricing-btn pricing-btn-primary" onClick={onLaunchApp}>
+              Start Pro trial
+            </button>
+          </div>
+
+          {/* Enterprise */}
+          <div className="pricing-card">
+            <div className="pricing-tier-label">Enterprise</div>
+            <div className="pricing-price">
+              <span className="pricing-amount">Custom</span>
+            </div>
+            <p className="pricing-tagline">Dedicated infrastructure for large-scale deployments.</p>
+            <ul className="pricing-features">
+              <li><span className="check">✓</span> <strong>Unlimited robots</strong></li>
+              <li><span className="check">✓</span> Unlimited telemetry credits</li>
+              <li><span className="check">✓</span> Private cloud / on-premise</li>
+              <li><span className="check">✓</span> SSO & advanced RBAC</li>
+              <li><span className="check">✓</span> Custom ROS integrations</li>
+              <li><span className="check">✓</span> Dedicated account manager</li>
+              <li><span className="check">✓</span> 99.9% uptime SLA</li>
+            </ul>
+            <button className="pricing-btn pricing-btn-outline" onClick={onLaunchApp}>
+              Contact sales
+            </button>
+          </div>
+
+        </div>
+      </section>
+
       {/* CTA Section */}
+
       <section className="cta-section">
         <div className="cta-content">
           <h2>Ready to orchestrate your fleet?</h2>
