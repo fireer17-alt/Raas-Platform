@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { CreditCard, Check, Award } from 'lucide-react';
 
-// On Vercel, use the serverless API routes directly.
-// Falls back to the local backend when running locally.
-const BILLING_API = process.env.REACT_APP_API_URL
-  ? `${process.env.REACT_APP_API_URL}/api/billing`
-  : '/api/billing';
+// Use Vercel serverless API routes when deployed (no localhost backend available).
+// Falls back to the local backend only when running locally.
+const apiUrl = process.env.REACT_APP_API_URL || '';
+const isLocalBackend = apiUrl.includes('localhost') || apiUrl.includes('127.0.0.1');
+const BILLING_API = isLocalBackend ? `${apiUrl}/api/billing` : '/api/billing';
+
 
 const defaultSubscription = {
   plan: 'free',
