@@ -53,6 +53,12 @@
   color: #0071e3;
 }
 
+.topbar-logo-img {
+  height: 24px;
+  width: 24px;
+  object-fit: contain;
+}
+
 .topbar-logo-text {
   font-size: 18px;
   font-weight: 700;

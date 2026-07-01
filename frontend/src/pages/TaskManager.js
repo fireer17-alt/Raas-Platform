@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { ListTodo, Cpu, AlertTriangle, Calendar, Plus, Play, CheckCircle2, Clock } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 const TaskManager = () => {
   const [tasks, setTasks] = useState([]);
   const [robots, setRobots] = useState([]);
   const [newTask, setNewTask] = useState({ name: '', robotId: '', priority: 'medium', dueDate: '' });
   const [loading, setLoading] = useState(true);
+  const [notification, setNotification] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -15,8 +17,8 @@ const TaskManager = () => {
   const fetchData = async () => {
     try {
       const [tasksRes, robotsRes] = await Promise.all([
-        axios.get('http://localhost:5000/api/tasks'),
-        axios.get('http://localhost:5000/api/robots')
+        axios.get(`${API_BASE_URL}/api/tasks`),
+        axios.get(`${API_BASE_URL}/api/robots`)
       ]);
       setTasks(tasksRes.data);
       setRobots(robotsRes.data);
@@ -30,7 +32,9 @@ const TaskManager = () => {
   const handleCreateTask = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/tasks', newTask);
+      const createdName = newTask.name;
+      await axios.post(`${API_BASE_URL}/api/tasks`, newTask);
+      setNotification(`TASK SCHEDULED: "${createdName}" successfully queued and active.`);
       setNewTask({ name: '', robotId: '', priority: 'medium', dueDate: '' });
       fetchData();
     } catch (error) {
@@ -92,6 +96,37 @@ const TaskManager = () => {
           QUEUE ACTIVE
         </div>
       </div>
+
+      {notification && (
+        <div style={{
+          padding: '14px 18px',
+          borderRadius: '6px',
+          background: 'rgba(0, 240, 255, 0.1)',
+          border: '1px solid var(--accent-cyan)',
+          color: 'var(--accent-cyan)',
+          fontFamily: 'var(--font-mono)',
+          fontSize: '13px',
+          marginBottom: '24px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
+          <div>{notification}</div>
+          <button 
+            onClick={() => setNotification(null)}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'inherit',
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+              fontWeight: 'bold'
+            }}
+          >
+            [DISMISS]
+          </button>
+        </div>
+      )}
 
       <div className="cyber-panel" style={{ marginBottom: '28px' }}>
         <h2 className="cyber-title">

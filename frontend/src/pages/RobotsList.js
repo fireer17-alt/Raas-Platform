@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Cpu, Battery, MapPin, Plus, Shield, Truck, RefreshCw } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 const RobotsList = () => {
   const [robots, setRobots] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newRobot, setNewRobot] = useState({ name: '', type: 'warehouse', location: '' });
+  const [notification, setNotification] = useState(null);
 
   useEffect(() => {
     fetchRobots();
@@ -13,7 +15,7 @@ const RobotsList = () => {
 
   const fetchRobots = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/robots');
+      const res = await axios.get(`${API_BASE_URL}/api/robots`);
       setRobots(res.data);
       setLoading(false);
     } catch (error) {
@@ -25,7 +27,9 @@ const RobotsList = () => {
   const handleAddRobot = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/robots', newRobot);
+      const deployedName = newRobot.name;
+      await axios.post(`${API_BASE_URL}/api/robots`, newRobot);
+      setNotification(`DEPLOYMENT PROTOCOL COMPLETE: Robot unit "${deployedName}" registered and online.`);
       setNewRobot({ name: '', type: 'warehouse', location: '' });
       fetchRobots();
     } catch (error) {
@@ -78,6 +82,37 @@ const RobotsList = () => {
           CONNECTED: {robots.length}
         </div>
       </div>
+
+      {notification && (
+        <div style={{
+          padding: '14px 18px',
+          borderRadius: '6px',
+          background: 'rgba(0, 240, 255, 0.1)',
+          border: '1px solid var(--accent-cyan)',
+          color: 'var(--accent-cyan)',
+          fontFamily: 'var(--font-mono)',
+          fontSize: '13px',
+          marginBottom: '24px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
+          <div>{notification}</div>
+          <button 
+            onClick={() => setNotification(null)}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'inherit',
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+              fontWeight: 'bold'
+            }}
+          >
+            [DISMISS]
+          </button>
+        </div>
+      )}
 
       <div className="cyber-panel" style={{ marginBottom: '28px' }}>
         <h2 className="cyber-title">
@@ -138,8 +173,8 @@ const RobotsList = () => {
                   {getRobotIcon(robot.type)}
                 </div>
                 <div>
-                  <h3 style={{ fontSize: '18px', fontWeight: '600', fontFamily: 'var(--font-heading)', letterSpacing: '-0.3px' }}>{robot.name}</h3>
-                  <span style={{ fontSize: '11px', textTransform: 'uppercase', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>{robot.type}</span>
+                  <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1d1d1f', fontFamily: 'var(--font-heading)', letterSpacing: '-0.3px', margin: 0 }}>{robot.name}</h3>
+                  <span style={{ fontSize: '11px', textTransform: 'uppercase', color: '#424245', fontWeight: '600', fontFamily: 'var(--font-mono)' }}>{robot.type}</span>
                 </div>
               </div>
               
