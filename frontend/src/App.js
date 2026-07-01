@@ -64,6 +64,8 @@ function App() {
     return (
       <LandingPage
         onLaunchApp={() => setMode('login')}
+        user={user}
+        onGoToDashboard={() => setMode('app')}
       />
     );
   }

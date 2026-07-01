@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { CreditCard, Check, Award } from 'lucide-react';
-import { API_BASE_URL } from '../config';
+
+// On Vercel, use the serverless API routes directly.
+// Falls back to the local backend when running locally.
+const BILLING_API = process.env.REACT_APP_API_URL
+  ? `${process.env.REACT_APP_API_URL}/api/billing`
+  : '/api/billing';
 
 const defaultSubscription = {
   plan: 'free',
@@ -42,7 +47,7 @@ const Billing = () => {
 
     const fetchBilling = async () => {
       try {
-        const res = await axios.get(`${API_BASE_URL}/api/billing/subscription`);
+        const res = await axios.get(`${BILLING_API}/subscription`);
         setSubscription(res.data || defaultSubscription);
         setLoading(false);
       } catch (error) {
@@ -58,7 +63,7 @@ const Billing = () => {
   const handleUpgrade = async () => {
     try {
       setLoading(true);
-      const res = await axios.post(`${API_BASE_URL}/api/billing/create-checkout-session`, {
+      const res = await axios.post(`${BILLING_API}/create-checkout-session`, {
         userId: 'global-user'
       });
       if (res.data && res.data.url) {
@@ -76,8 +81,9 @@ const Billing = () => {
   const handleManagePortal = async () => {
     try {
       setLoading(true);
-      const res = await axios.post(`${API_BASE_URL}/api/billing/create-portal-session`, {
-        userId: 'global-user'
+      const res = await axios.post(`${BILLING_API}/create-portal-session`, {
+        userId: 'global-user',
+        stripeCustomerId: subscription.stripeCustomerId
       });
       if (res.data && res.data.url) {
         window.location.href = res.data.url;

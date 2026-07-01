@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import './LandingPage.css';
 import { Cpu, Zap, Shield, BarChart3, Coffee, Globe, ArrowRight } from 'lucide-react';
 
-const LandingPage = ({ onLaunchApp }) => {
+const LandingPage = ({ onLaunchApp, user, onGoToDashboard }) => {
   const [scrolled, setScrolled] = useState(false);
   const [activeMockTab, setActiveMockTab] = useState('telemetry');
   const [activeNav, setActiveNav] = useState(null);
@@ -199,10 +199,35 @@ const LandingPage = ({ onLaunchApp }) => {
             )}
           </ul>
         <div className="nav-actions">
-          <button className="nav-signin" onClick={onLaunchApp}>Sign in</button>
-          <button className="nav-cta" onClick={onLaunchApp}>
-            Get started for free
-          </button>
+          {user ? (
+            // ── Logged-in state ──
+            <>
+              <div className="nav-user-chip">
+                <div className="nav-user-avatar">
+                  {user.photoURL
+                    ? <img src={user.photoURL} alt="avatar" className="nav-user-photo" />
+                    : <span className="nav-user-initial">
+                        {(user.displayName || user.email || 'U')[0].toUpperCase()}
+                      </span>
+                  }
+                </div>
+                <span className="nav-user-name">
+                  {user.displayName || user.email?.split('@')[0] || 'User'}
+                </span>
+              </div>
+              <button className="nav-cta" onClick={onGoToDashboard}>
+                Go to Dashboard
+              </button>
+            </>
+          ) : (
+            // ── Logged-out state ──
+            <>
+              <button className="nav-signin" onClick={onLaunchApp}>Sign in</button>
+              <button className="nav-cta" onClick={onLaunchApp}>
+                Get started for free
+              </button>
+            </>
+          )}
         </div>
       </nav>
 

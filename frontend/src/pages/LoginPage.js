@@ -117,17 +117,20 @@ const LoginPage = ({ onSuccess, onBack }) => {
   // ── Human-readable Firebase errors ──
   const friendlyError = (code) => {
     const map = {
-      'auth/user-not-found':       'No account found with that email.',
-      'auth/wrong-password':       'Incorrect password. Please try again.',
-      'auth/invalid-email':        'Please enter a valid email address.',
-      'auth/email-already-in-use': 'An account already exists with this email.',
-      'auth/weak-password':        'Password must be at least 6 characters.',
-      'auth/too-many-requests':    'Too many attempts. Please try again later.',
-      'auth/popup-closed-by-user': 'Sign-in popup was closed. Please try again.',
-      'auth/network-request-failed': 'Network error. Check your connection.',
-      'auth/invalid-credential':   'Invalid credentials. Please check and try again.',
+      'auth/user-not-found':        'No account found with that email.',
+      'auth/wrong-password':        'Incorrect password. Please try again.',
+      'auth/invalid-email':         'Please enter a valid email address.',
+      'auth/email-already-in-use':  'An account already exists with this email.',
+      'auth/weak-password':         'Password must be at least 6 characters.',
+      'auth/too-many-requests':     'Too many attempts. Please try again later.',
+      'auth/popup-closed-by-user':  'Sign-in popup was closed. Please try again.',
+      'auth/network-request-failed':'Network error. Check your connection.',
+      'auth/invalid-credential':    'Invalid credentials. Please check and try again.',
+      'auth/operation-not-allowed': '⚠️ Email/Password sign-in is not enabled. Go to Firebase Console → Authentication → Sign-in method and enable it.',
+      'auth/invalid-api-key':       '⚠️ Firebase API key is invalid. Check your .env file.',
+      'auth/configuration-not-found': '⚠️ Firebase project not configured. Enable Authentication in Firebase Console.',
     };
-    return map[code] || 'Something went wrong. Please try again.';
+    return map[code] || `Error [${code}]: Something went wrong. Please try again.`;
   };
 
   // ── Email / Password sign-in ──
